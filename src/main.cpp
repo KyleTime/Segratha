@@ -49,9 +49,9 @@ int main()
 
         window.clear();
 
-        if(timer >= 0.05)
+        if(timer >= 0.005)
         {
-            manager->UpdateChecker();
+            manager->UpdateThreaded();
             timer = 0;
         }
 

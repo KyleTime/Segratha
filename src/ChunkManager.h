@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include <utility>
 #include <vector>
+#include <thread>
 
 class ChunkManager
 {
@@ -20,6 +21,11 @@ class ChunkManager
         /// @brief loads in any needed chunks that the player is close to
         void LoadChunks();
 
+        /// @brief Runs through the process of multithreading a set of chunks
+        /// @param xMod (0 - 1) processes chunk if chunk->xChunk % 2 == xMod
+        /// @param yMod (0 - 1) processes chunk if chunk->yChunk % 2 == yMod
+        /// @param threads A reference to the current vector of threads
+        void ThreadHelper(int xMod, int yMod, std::vector<std::thread>& threads);
     public:
 
         /// @brief loads a particular chunk position
@@ -36,10 +42,12 @@ class ChunkManager
         ~ChunkManager();
         static ChunkManager* GetInstance();
         void UpdateAll();
-        void DrawAll(sf::RenderWindow* target); //draws each function TODO: make this only draw visible chunks
+        void DrawAll(sf::RenderWindow* target); //draws each chunk TODO: make this only draw visible chunks
 
+        ///@brief Updates in a Checkerboard pattern, works a bit better than UpdateAll(), if a bit slower
         void UpdateChecker();
 
+        ///@brief Updates all chunks using multiple CPU threads
         void UpdateThreaded();
 
         //given coordinates on the chunk grid, grab that chunk and return a pointer

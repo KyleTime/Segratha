@@ -59,6 +59,33 @@ void ChunkManager::UpdateChecker()
     }
 }
 
+void ChunkManager::ThreadHelper(int xMod, int yMod, std::vector<std::thread>& threads)
+{
+    //I have no idea why this is necessary, but it is
+    unsigned char cycle = this->cycle;
+
+    //loop for each chunk in chunks
+    for (auto& chunk : chunks) {
+
+        //test whether "chunk" part of the first pass
+        if(chunk->xChunk % 2 == xMod && chunk->yChunk % 2 == yMod)
+        {
+            //create a lambda that takes in the chunk and the cycle, then updates the chunk, and add it to threads
+            threads.emplace_back([&chunk, &cycle]() {
+                chunk->ChunkUpdate(cycle);
+            });
+        }
+    }
+
+    //wait for each thread to finish
+    for (auto& thread : threads) {
+        thread.join();
+    }
+
+    //clear all threads
+    threads.clear();
+}
+
 void ChunkManager::UpdateThreaded()
 {
     //first pass is  (x % 2 == 0 && y % 2 == 0)
@@ -66,7 +93,29 @@ void ChunkManager::UpdateThreaded()
     //third pass is  (x % 2 == 0 && y % 2 == 1)
     //fourth pass is (x % 2 == 1 && y % 2 == 1)
 
-    //funny thread branch
+    cycle++;
+
+    //there's probably a better way to do this, but "int cycle = cycle" just works
+    unsigned char cycle = this->cycle;
+
+    //list of current threads
+    std::vector<std::thread> threads;
+
+    //PASS 1 ----------------------------------------
+    ThreadHelper(0, 0, threads);
+    //-----------------------------------------------
+
+    //PASS 2 ----------------------------------------
+    ThreadHelper(1, 0, threads);
+    //-----------------------------------------------
+
+    //PASS 3 ----------------------------------------
+    ThreadHelper(0, 1, threads);
+    //-----------------------------------------------
+
+    //PASS 4 ----------------------------------------
+    ThreadHelper(1, 1, threads);
+    //-----------------------------------------------
 }
 
 bool ChunkManager::LoadAt(int x, int y)
