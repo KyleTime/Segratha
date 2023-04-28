@@ -26,23 +26,29 @@ class ChunkManager
         /// @param yMod (0 - 1) processes chunk if chunk->yChunk % 2 == yMod
         /// @param threads A reference to the current vector of threads
         void ThreadHelper(int xMod, int yMod, std::vector<std::thread>& threads);
+
     public:
+
+        ChunkManager();
+        ~ChunkManager();
+        static ChunkManager* GetInstance();
 
         /// @brief loads a particular chunk position
         /// @param x x location of chunk
         /// @param y y location of chunk
         bool LoadAt(int x, int y);
 
-        /// @brief loads a particular chunk position
+        /// @brief @brief loads a particular chunk position
         /// @param x x location of chunk
         /// @param y y location of chunk
+        /// @return whether the operation was successful
         bool UnLoadAt(int x, int y);
 
-        ChunkManager();
-        ~ChunkManager();
-        static ChunkManager* GetInstance();
+        ///Updates every chunk in the order they were loaded
         void UpdateAll();
-        void DrawAll(sf::RenderWindow* target); //draws each chunk TODO: make this only draw visible chunks
+
+        /// @brief Draws EVERY chunk to the screen
+        void DrawAll(sf::RenderWindow* target);
 
         ///@brief Updates in a Checkerboard pattern, works a bit better than UpdateAll(), if a bit slower
         void UpdateChecker();
@@ -50,10 +56,10 @@ class ChunkManager
         ///@brief Updates all chunks using multiple CPU threads
         void UpdateThreaded();
 
-        //given coordinates on the chunk grid, grab that chunk and return a pointer
+        ///@brief given coordinates on the chunk grid, grab that chunk and return a pointer
         Chunk* GetChunk(int xChunk, int yChunk);
 
-        //given Cell coordinates, return a Chunk*
+        ///@brief given Cell coordinates, return a Chunk*
         Chunk* GetChunkCell(int xCell, int yCell);
 
         //given Cell coordinates, return a Cell*
