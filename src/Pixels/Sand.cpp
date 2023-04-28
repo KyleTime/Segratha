@@ -1,8 +1,8 @@
-#include "../ChunkManager.h"
+#include "../CaveSand.h"
 
 void Cell::SandUpdate(int xW, int yW)
 {
-    static ChunkManager* inst = ChunkManager::GetInstance();
+    static CaveSand* inst = CaveSand::GetInstance();
 
     if( !inst->Move(xW, yW, xW, yW + 1))
     {

@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 
-#include "ChunkManager.h"
+#include "CaveSand.h"
 
 #include <iostream>
 
@@ -18,7 +18,7 @@ int main()
 
     window.setView(CAMERA::view);
 
-    ChunkManager* manager = ChunkManager::GetInstance();
+    CaveSand* manager = CaveSand::GetInstance();
     for(int x = 0; x < 4; x++)
         for(int y = 0; y < 3; y++)
         {

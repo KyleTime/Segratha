@@ -1,5 +1,6 @@
 #ifndef CHUNKHEADER_H
 #define CHUNKHEADER_H
+
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include "Cell.h"

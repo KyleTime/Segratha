@@ -1,4 +1,4 @@
-#include "ChunkManager.h"
+#include "CaveSand.h"
 
 Cell::Cell()
     : color(sf::Color::Magenta), cycle(0), type(AIR)
@@ -36,7 +36,7 @@ Cell::~Cell()
 
 void Cell::Update(int xW, int yW, unsigned char cycle)
 {
-    static ChunkManager* inst = ChunkManager::GetInstance();
+    static CaveSand* inst = CaveSand::GetInstance();
 
     if(this->cycle == cycle)
     {
