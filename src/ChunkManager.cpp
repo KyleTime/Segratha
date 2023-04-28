@@ -66,7 +66,7 @@ void ChunkManager::UpdateThreaded()
     //third pass is  (x % 2 == 0 && y % 2 == 1)
     //fourth pass is (x % 2 == 1 && y % 2 == 1)
 
-    
+    //funny thread branch
 }
 
 bool ChunkManager::LoadAt(int x, int y)
