@@ -4,6 +4,7 @@
 
 #include <iostream>
 
+using namespace Segratha;
 
 int main()
 {

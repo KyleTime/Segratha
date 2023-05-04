@@ -1,5 +1,7 @@
 #include "CaveSand.h"
 
+using namespace Segratha;
+
 CaveSand* CaveSand::inst = nullptr;
 
 CaveSand::CaveSand()

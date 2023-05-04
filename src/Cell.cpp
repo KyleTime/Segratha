@@ -1,5 +1,7 @@
 #include "CaveSand.h"
 
+using namespace Segratha;
+
 Cell::Cell()
     : color(sf::Color::Magenta), cycle(0), type(AIR)
 {

@@ -1,6 +1,8 @@
 #include "Chunk.h"
 #include <algorithm>
 
+using namespace Segratha;
+
 Chunk::Chunk(int xChunk, int yChunk)
     : vert(sf::Quads, CHUNK_SIZE * CHUNK_SIZE * 4), xChunk(xChunk), yChunk(yChunk)
 {

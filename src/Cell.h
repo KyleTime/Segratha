@@ -5,28 +5,31 @@
 
 #include <iostream>
 
-enum cell_type : unsigned char { AIR, SOLID, SAND, WATER };
-
-class Cell
+namespace Segratha
 {
-    protected:
-        unsigned char cycle; //set equal to global cycle after update, stops double updates 
-    public:
-        cell_type type;
-        sf::Color color; //color to render this cell
-        Cell();
-        Cell(cell_type type);
-        ~Cell();
-        void Update(int xW, int yW, unsigned char cycle);
+    enum cell_type : unsigned char { AIR, SOLID, SAND, WATER };
 
-        //info functions
-        bool isAir();
+    class Cell
+    {
+        protected:
+            unsigned char cycle; //set equal to global cycle after update, stops double updates 
+        public:
+            cell_type type;
+            sf::Color color; //color to render this cell
+            Cell();
+            Cell(cell_type type);
+            ~Cell();
+            void Update(int xW, int yW, unsigned char cycle);
 
-    private:
-        //update functions for different types
+            //info functions
+            bool isAir();
 
-        //Updates a pixel as if it were sand
-        void SandUpdate(int xW, int yW);
-};
+        private:
+            //update functions for different types
+
+            //Updates a pixel as if it were sand
+            void SandUpdate(int xW, int yW);
+    };
+}
 
 #endif

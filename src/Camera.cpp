@@ -1,5 +1,6 @@
-
 #include "Camera.h"
+
+using namespace Segratha;
 
 float CAMERA::zoom = 1.f;
 sf::View CAMERA::view = sf::View();

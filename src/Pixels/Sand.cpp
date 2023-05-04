@@ -1,5 +1,9 @@
 #include "../CaveSand.h"
 
+#include <iostream>
+
+using namespace Segratha;
+
 void Cell::SandUpdate(int xW, int yW)
 {
     static CaveSand* inst = CaveSand::GetInstance();

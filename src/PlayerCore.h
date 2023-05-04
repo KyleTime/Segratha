@@ -3,13 +3,18 @@
 
 #include <SFML/Graphics.hpp>
 
-class PlayerCore
+namespace Segratha
 {
-    public:
-        sf::Vector2f position;
+    class PlayerCore
+    {
+        public:
+            sf::Vector2f position;
 
-        PlayerCore();
-        ~PlayerCore();
-};
+            PlayerCore();
+            ~PlayerCore();
+
+            void Update();
+    };
+}
 
 #endif
