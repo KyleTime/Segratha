@@ -14,6 +14,7 @@ namespace Segratha
             ~PlayerCore();
 
             void Update();
+            void Draw(sf::RenderWindow* target);
     };
 }
 

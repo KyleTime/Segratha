@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
 
 #include "CaveSand.h"
+#include "PlayerCore.h"
+#include "KyleTime.hpp"
 
 #include <iostream>
 
@@ -26,6 +28,8 @@ int main()
             manager->LoadAt(x, y);
         }
 
+    KyleTime* kTime = KyleTime::GetInstance();
+
     //for(int x = 0; x < 4; x++)
     //    for(int y = 0; y < 3; y++)
     //    {
@@ -35,11 +39,14 @@ int main()
     manager->Set(32, 48, Cell(SAND));
     manager->Set(64 + 32, 48, Cell(SAND));
 
+    PlayerCore player;
+
     float timer = 0;
-    sf::Clock deltaClock;
     while (window.isOpen())
     {
-        sf::Time deltaTime = deltaClock.restart();
+        KyleTime::UpdateDelta();
+
+        player.Update();
 
         sf::Event event;
         while (window.pollEvent(event))
@@ -117,6 +124,8 @@ int main()
 
         manager->DrawAll(&window);
 
+        player.Draw(&window);
+
         window.display();
     
         static bool pause = false;
@@ -132,8 +141,11 @@ int main()
         }
 
         if(!pause)
-            timer += deltaTime.asSeconds();
+            timer += KyleTime::DeltaTime();
     }
+
+    delete manager;
+    delete kTime;
 
     return 0;
 }
