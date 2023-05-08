@@ -94,7 +94,13 @@ namespace Segratha
 
             //Simply sets the position to the desired Cell in the desired Chunk
             //(x, y) is in chunk coordinates
-            void Set(int x, int y, Cell p, Chunk* c);
+            void Set(int x, int y, Cell p, Chunk* chunk);
+
+            //touches a chunk at the given Cell coordinates
+            void Touch(int x, int y);
+
+            //touches a specified chunk at the given chunk coordinates
+            void Touch(int x, int y, Chunk* chunk);
     };
 }
 

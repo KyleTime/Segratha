@@ -27,12 +27,14 @@ namespace Segratha
 
         public:
             //whether this chunk is active
-            bool updated = true;
             sf::Vector2i rect1 = sf::Vector2i(0, 0); //update from here to rect2, bottom left
             sf::Vector2i rect2 = sf::Vector2i(63, 63); //update from rect1 to here, top right
 
             int xChunk; int yChunk;
             Cell cells[CHUNK_SIZE][CHUNK_SIZE];
+            
+            unsigned char updateCycles = 1;
+
             Chunk(int xChunk, int yChunk);
             ~Chunk();
 

@@ -57,7 +57,7 @@ int main()
 
         window.clear();
 
-        if(timer >= 0.005)
+        if(timer >= 0.005f)
         {
             manager->UpdateThreaded();
             timer = 0;

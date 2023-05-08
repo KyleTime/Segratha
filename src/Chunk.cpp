@@ -49,7 +49,7 @@ void Chunk::Unload()
 
 void Chunk::ChunkUpdate(unsigned char cycle)
 {
-    if(!updated)
+    if(updateCycles <= 0)
         return;
 
     sf::Vector2i curR1 = rect1;
@@ -61,7 +61,7 @@ void Chunk::ChunkUpdate(unsigned char cycle)
     curR2.x = curR2.x > CHUNK_SIZE - 1 ? CHUNK_SIZE - 1 : curR2.x;
     curR2.y = curR2.y < 0 ? 0 : curR2.y;
 
-    rect1 = sf::Vector2i(-99, -1);
+    rect1 = sf::Vector2i(-99999, -1);
     rect2 = sf::Vector2i(-1, -1);
 
     for(int y = curR1.y; y >= curR2.y; --y)
@@ -70,8 +70,7 @@ void Chunk::ChunkUpdate(unsigned char cycle)
             cells[x][y].Update(x + xChunk * CHUNK_SIZE, y + yChunk * CHUNK_SIZE, cycle);
         }
     
-    if(rect1.x == -99)
-        updated = false;
+    updateCycles -= 1;
 }
 
 void Chunk::ChunkDraw(sf::RenderWindow* target)
@@ -117,22 +116,22 @@ void Chunk::ChunkDraw(sf::RenderWindow* target)
 
 void Chunk::Touch(int x, int y)
 {
-    updated = true;
-
-    int x2 = x % CHUNK_SIZE;
-    int y2 = y % CHUNK_SIZE;
+    updateCycles = 2;
 
     int size = 2; //size to touch around pixel
 
+    if(x % CHUNK_SIZE != x || y % CHUNK_SIZE != y)
+        std::cout << "TOUCHITY FUCK FUCK FUCK FUCK" << std::endl;
+
     //calculate the area around size
-    int xMin = (x2 - size);
-    int xMax = (x2 + size);
+    int xMin = (x - size);
+    int xMax = (x + size);
 
-    int yMin = (y2 - size);
-    int yMax = (y2 + size);
+    int yMin = (y - size);
+    int yMax = (y + size);
 
-    //if rect1.x is -1, we can assume all values are uninitialized
-    if(rect1.x == -99)
+    //if rect1.x is -99999, we can assume all values are uninitialized
+    if(rect1.x == -99999)
     {
         rect1 = sf::Vector2i(xMin, yMax);
         rect2 = sf::Vector2i(xMax, yMin);

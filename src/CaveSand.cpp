@@ -238,8 +238,8 @@ bool CaveSand::Move(int fromX, int fromY, int toX, int toY)
         if(!same)
         {
             Chunk* from = GetChunkCell(fromX, fromY);
-            Set(toX, toY, from->cells[fromX % CHUNK_SIZE][fromY % CHUNK_SIZE], c);
-            Set(fromX, fromY, Cell(AIR), from);
+            Set(toX % CHUNK_SIZE, toY % CHUNK_SIZE, from->cells[fromX % CHUNK_SIZE][fromY % CHUNK_SIZE], c);
+            Set(fromX % CHUNK_SIZE, fromY % CHUNK_SIZE, Cell(AIR), from);
             
             //from->Touch(fromX % CHUNK_SIZE, fromY % CHUNK_SIZE);
         }
@@ -249,8 +249,8 @@ bool CaveSand::Move(int fromX, int fromY, int toX, int toY)
             //std::swap(c->cells[fromX % CHUNK_SIZE][fromY % CHUNK_SIZE], c->cells[toX % CHUNK_SIZE][toY % CHUNK_SIZE]);
             //c->Touch(fromX % CHUNK_SIZE, fromY % CHUNK_SIZE);
 
-            Set(toX, toY, c->cells[fromX % CHUNK_SIZE][fromY % CHUNK_SIZE], c);
-            Set(fromX, fromY, Cell(AIR), c);
+            Set(toX % CHUNK_SIZE, toY % CHUNK_SIZE, c->cells[fromX % CHUNK_SIZE][fromY % CHUNK_SIZE], c);
+            Set(fromX % CHUNK_SIZE, fromY % CHUNK_SIZE, Cell(AIR), c);
         }
 
         //touch at "to" position (it all we care about)
@@ -268,44 +268,55 @@ void CaveSand::Set(int x, int y, Cell p)
 {
     Chunk* chunk = GetChunkCell(x, y);
 
-    if(chunk != nullptr)
-    {
-        chunk->cells[x % CHUNK_SIZE][y % CHUNK_SIZE] = p;
-        chunk->Touch(x % CHUNK_SIZE, y % CHUNK_SIZE);
-
-        if(x == 0)
-        {
-            Chunk* c = GetChunk(chunk->xChunk - 1, chunk->yChunk);
-            if(c)
-                c->Touch(CHUNK_SIZE - 1, y % CHUNK_SIZE);
-        }
-        else if(x == CHUNK_SIZE - 1)
-        {
-            Chunk* c = GetChunk(chunk->xChunk + 1, chunk->yChunk);
-            if(c)
-                c->Touch(0, y % CHUNK_SIZE);
-        }
-
-        if(y == 0)
-        {
-            Chunk* c = GetChunk(chunk->xChunk + 1, chunk->yChunk);
-            if(c)
-                c->Touch(x % CHUNK_SIZE, CHUNK_SIZE - 1);
-        }
-        else if(y == CHUNK_SIZE - 1)
-        {
-            Chunk* c = GetChunk(chunk->xChunk - 1, chunk->yChunk);
-            if(c)
-                c->Touch(x % CHUNK_SIZE, 0);
-        }
-    }
+    Set(x % CHUNK_SIZE, y % CHUNK_SIZE, p, chunk);
 }
 
-void CaveSand::Set(int x, int y, Cell p, Chunk* c)
+void CaveSand::Set(int x, int y, Cell p, Chunk* chunk)
 {
-    if(c != nullptr)
+    if(chunk == nullptr)
+        return;
+
+    chunk->cells[x][y] = p;
+    Touch(x, y, chunk);
+}
+
+void CaveSand::Touch(int x, int y)
+{
+    Chunk* chunk = GetChunkCell(x, y);
+
+    Touch(x % CHUNK_SIZE, y % CHUNK_SIZE, chunk);
+}
+
+void CaveSand::Touch(int x, int y, Chunk* chunk)
+{
+    if(chunk == nullptr)
+        return;
+
+    chunk->Touch(x, y);
+
+    if(x == 0)
     {
-        c->cells[x % CHUNK_SIZE][y % CHUNK_SIZE] = p;
-        c->Touch(x % CHUNK_SIZE, y % CHUNK_SIZE);
+        Chunk* c = GetChunk(chunk->xChunk - 1, chunk->yChunk);
+        if(c)
+            c->Touch(CHUNK_SIZE - 1, y);
+    }
+    else if(x == CHUNK_SIZE - 1)
+    {
+        Chunk* c = GetChunk(chunk->xChunk + 1, chunk->yChunk);
+        if(c)
+            c->Touch(0, y);
+    }
+
+    if(y == 0)
+    {
+        Chunk* c = GetChunk(chunk->xChunk, chunk->yChunk - 1);
+        if(c)
+            c->Touch(x, CHUNK_SIZE - 1);
+    }
+    else if(y == CHUNK_SIZE - 1)
+    {
+        Chunk* c = GetChunk(chunk->xChunk, chunk->yChunk + 1);
+        if(c)
+            c->Touch(x, 0);
     }
 }

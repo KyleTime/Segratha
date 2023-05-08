@@ -42,7 +42,7 @@ void Cell::Update(int xW, int yW, unsigned char cycle)
 
     if(this->cycle == cycle)
     {
-        inst->GetChunkCell(xW, yW)->Touch(xW, yW);
+        inst->Touch(xW, yW);
         return;
     }
 
