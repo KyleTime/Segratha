@@ -120,6 +120,14 @@ void CaveSand::UpdateThreaded()
     //-----------------------------------------------
 }
 
+void CaveSand::Autoload(sf::Vector2f pos)
+{
+    float screenX = CAMERA::GetScreenWidth();
+    float screenY = CAMERA::GetScreenHeight();
+
+
+}
+
 bool CaveSand::LoadAt(int x, int y)
 {
     chunks.push_back(new Chunk(x, y));
@@ -264,6 +272,32 @@ void CaveSand::Set(int x, int y, Cell p)
     {
         chunk->cells[x % CHUNK_SIZE][y % CHUNK_SIZE] = p;
         chunk->Touch(x % CHUNK_SIZE, y % CHUNK_SIZE);
+
+        if(x == 0)
+        {
+            Chunk* c = GetChunk(chunk->xChunk - 1, chunk->yChunk);
+            if(c)
+                c->Touch(CHUNK_SIZE - 1, y % CHUNK_SIZE);
+        }
+        else if(x == CHUNK_SIZE - 1)
+        {
+            Chunk* c = GetChunk(chunk->xChunk + 1, chunk->yChunk);
+            if(c)
+                c->Touch(0, y % CHUNK_SIZE);
+        }
+
+        if(y == 0)
+        {
+            Chunk* c = GetChunk(chunk->xChunk + 1, chunk->yChunk);
+            if(c)
+                c->Touch(x % CHUNK_SIZE, CHUNK_SIZE - 1);
+        }
+        else if(y == CHUNK_SIZE - 1)
+        {
+            Chunk* c = GetChunk(chunk->xChunk - 1, chunk->yChunk);
+            if(c)
+                c->Touch(x % CHUNK_SIZE, 0);
+        }
     }
 }
 

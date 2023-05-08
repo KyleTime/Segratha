@@ -33,3 +33,13 @@ void CAMERA::ChangeSize(sf::Vector2f size)
 {
     view.setSize(size);
 }
+
+float CAMERA::GetScreenHeight()
+{
+    return SCREEN_SIZE;
+}
+
+float CAMERA::GetScreenWidth()
+{
+    return SCREEN_SIZE * ASPECT_RATIO;
+}

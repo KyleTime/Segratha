@@ -58,6 +58,10 @@ namespace Segratha
             ///@brief Updates all chunks using multiple CPU threads
             void UpdateThreaded();
 
+            /// @brief Based on the position given, it figures out what chunks must be loaded or unloaded.
+            /// @param position position to focus on, generally the player.
+            void Autoload(sf::Vector2f position);
+
             ///@brief given coordinates on the chunk grid, grab that chunk and return a pointer
             Chunk* GetChunk(int xChunk, int yChunk);
 

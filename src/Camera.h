@@ -5,6 +5,8 @@
 
 namespace Segratha
 {
+    //NOTE: changing view will change the camera itself btw
+
     class CAMERA
     {
         public:
@@ -24,6 +26,9 @@ namespace Segratha
             static void ChangeSize(int x, int y);
 
             static void ChangeSize(sf::Vector2f size);
+
+            static float GetScreenHeight();
+            static float GetScreenWidth();
     };
 }
 
