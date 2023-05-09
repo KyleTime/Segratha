@@ -87,6 +87,7 @@ void Chunk::ChunkDraw(sf::RenderWindow* target)
     }
 
     target->draw(vert);
+    
     /*
     //chunk border
     sf::RectangleShape border(sf::Vector2f(CHUNK_SIZE * CELL_SIZE, CHUNK_SIZE * CELL_SIZE));
@@ -94,7 +95,7 @@ void Chunk::ChunkDraw(sf::RenderWindow* target)
     border.setOutlineThickness(10);
     border.setOutlineColor(sf::Color::Green);
     border.setFillColor(sf::Color::Transparent);
-    //target->draw(border);*/
+    //target->draw(border);
 
     sf::Vector2i curR1 = rect1;
     sf::Vector2i curR2 = rect2;
@@ -111,7 +112,7 @@ void Chunk::ChunkDraw(sf::RenderWindow* target)
     rect.setFillColor(sf::Color::Transparent);
     rect.setOutlineThickness(5);
     rect.setOutlineColor(sf::Color::Red);
-    target->draw(rect);
+    target->draw(rect);*/
 }
 
 void Chunk::Touch(int x, int y)
@@ -119,9 +120,6 @@ void Chunk::Touch(int x, int y)
     updateCycles = 2;
 
     int size = 2; //size to touch around pixel
-
-    if(x % CHUNK_SIZE != x || y % CHUNK_SIZE != y)
-        std::cout << "TOUCHITY FUCK FUCK FUCK FUCK" << std::endl;
 
     //calculate the area around size
     int xMin = (x - size);

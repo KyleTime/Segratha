@@ -122,7 +122,7 @@ int main()
             } */
         }
 
-        //manager->DrawAll(&window);
+        manager->DrawAll(&window);
 
         player.Draw(&window);
 
