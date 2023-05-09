@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 
-#include "CaveSand.h"
+#include "CaveSand/CaveSand.h"
 #include "PlayerCore.h"
 #include "KyleTime.hpp"
 
@@ -57,7 +57,7 @@ int main()
 
         window.clear();
 
-        if(timer >= 0.005f)
+        if(timer >= 0.01f)
         {
             manager->UpdateThreaded();
             timer = 0;
@@ -122,7 +122,7 @@ int main()
             } */
         }
 
-        manager->DrawAll(&window);
+        //manager->DrawAll(&window);
 
         player.Draw(&window);
 

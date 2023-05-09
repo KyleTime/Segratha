@@ -2,7 +2,7 @@
 #define CAVESAND_H
 
 #include "Chunk.h"
-#include "Camera.h"
+#include "../Camera.h"
 #include <utility>
 #include <vector>
 #include <thread>
