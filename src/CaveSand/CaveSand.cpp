@@ -7,7 +7,7 @@ CaveSand* CaveSand::inst = nullptr;
 CaveSand::CaveSand()
     : cycle(0)
 {
-}
+}  
 
 CaveSand::~CaveSand()
 {
@@ -24,41 +24,106 @@ CaveSand* CaveSand::GetInstance()
     return inst;
 }
 
-void CaveSand::UpdateAll()
+void CaveSand::FullRun(sf::RenderWindow* target, float updateTime)
 {
-    cycle++;
-    for(int i = 0; i < chunks.size(); i++)
+    static float timer = 0;
+
+    //first, update all cells
+    if(timer > updateTime)
     {
-        chunks[i]->ChunkUpdate(cycle);
+        UpdateThreaded();
+        timer = 0;
     }
+    timer += KyleTime::DeltaTime();
+
+    //then, allocate render chunks
+    AllocRenderers(target);
+
+    //Finally, draw all render chunks
+    DrawAll(target);
 }
 
 void CaveSand::DrawAll(sf::RenderWindow* target)
 {
-    for (int i = 0; i < chunks.size(); i++)
+    //draw out all current render chunks
+    for (int i = 0; i < numRend; i++)
     {
-        chunks[i]->ChunkDraw(target);
+        rend[i].ChunkDraw(target);
     }
 }
 
-void CaveSand::UpdateChecker()
+void CaveSand::AllocRenderers(sf::RenderWindow* target)
 {
-    cycle++;
-    for(int i = 0; i < chunks.size(); i++)
+    //grab view
+    sf::View view = target->getView();
+
+    sf::Vector2f camPos = view.getCenter(); //grab the camera position
+    sf::Vector2f camSize = view.getSize(); //grab camera size
+
+    //DO I HAVE TO?---------------------------
+
+    if(abs(camPos.x - lastCamPos.x) < threshold.x && abs(camPos.y - lastCamPos.y) < threshold.y)
     {
-        if((chunks[i]->yChunk + chunks[i]->xChunk) % 2 == 0)
-        {
-            chunks[i]->ChunkUpdate(cycle);
-        }
+        //NO
+        return;
     }
+
+    //----------------------------------------
+
+    //rectangle formula:
+    //rect1, rect2
+    //if(abs(rect1.x - rect2.x) < rect1.xSize/2 + rect2.xSize/2 && abs(rect1.y - rect2.y) < rect1.ySize/2 + rect2.ySize/2)
+
+    threshold = sf::Vector2f(999999, 999999);
+
+    float chunkSize = CHUNK_SIZE * CELL_SIZE;
+
+    int chunkRendPos = 0; //keep track of the chunk renderer we're looking at
+
+    for(int i = 0; i < numRend; i++)
+        rend[i].Unbind();
 
     for(int i = 0; i < chunks.size(); i++)
     {
-        if((chunks[i]->yChunk + chunks[i]->xChunk) % 2 == 1)
+        Chunk* c = chunks[i];
+
+        if(!c)
+            break;
+
+        //calculate pixel position of the chunk
+        sf::Vector2f chunkPos = sf::Vector2f((c->xChunk + 0.5f) * chunkSize, (c->yChunk + 0.5f) * chunkSize);
+
+        //is the chunk in the frame?
+        if(abs(chunkPos.x - camPos.x) < chunkSize/2 + camSize.x/2 && abs(chunkPos.y - camPos.y) < chunkSize/2 + camSize.y)
         {
-            chunks[i]->ChunkUpdate(cycle);
+            //allocate a chunk renderer to it:
+            rend[chunkRendPos].Bind(c);
+            chunkRendPos++;
+
+            //do funny math to figure out the threshold
+            float xCamR = camPos.x + camSize.x/2; //calculate outer right edge of camera
+            float xCamL = camPos.x - camSize.x/2; //calculate outer left edge of camera
+
+            float xChunkR = chunkPos.x + chunkSize/2; //calculate outer right edge of chunk
+            float xChunkL = chunkPos.x - chunkSize/2; //calculate outer left edge of chunk
+
+            threshold.x = __min(__min(abs(xChunkR - xCamR), abs(xChunkL - xCamL)), threshold.x); //figure out which distance is smaller, then compare to current threshold
+
+            float yCamU = camPos.y + camSize.y/2; //calculate outer right edge of camera
+            float yCamD = camPos.y - camSize.y/2; //calculate outer left edge of camera
+
+            float yChunkU = chunkPos.y + chunkSize/2; //calculate outer right edge of chunk
+            float yChunkD = chunkPos.y - chunkSize/2; //calculate outer left edge of chunk
+
+            threshold.y = __min(__min(abs(yChunkU - yCamU), abs(yChunkD - yCamD)), threshold.y); //figure out which distance is smaller, then compare to current threshold
         }
+
+        //we out of renderers
+        if(chunkRendPos == numRend)
+            break;
     }
+
+    lastCamPos = camPos; //make sure we store this shit
 }
 
 void CaveSand::ThreadHelper(int xMod, int yMod, std::vector<std::thread>& threads)
@@ -124,8 +189,6 @@ void CaveSand::Autoload(sf::Vector2f pos)
 {
     float screenX = CAMERA::GetScreenWidth();
     float screenY = CAMERA::GetScreenHeight();
-
-
 }
 
 bool CaveSand::LoadAt(int x, int y)

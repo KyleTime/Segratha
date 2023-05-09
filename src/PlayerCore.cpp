@@ -1,6 +1,7 @@
 #include "PlayerCore.h"
 #include "SFML/Graphics.hpp"
-#include "KyleTime.hpp"
+#include "CaveSand/KyleTime.hpp"
+#include "CaveSand/Camera.h"
 
 using namespace Segratha;
 
@@ -30,6 +31,8 @@ void PlayerCore::Update()
     {
         position.x -= speed * KyleTime::DeltaTime();
     }
+
+    CAMERA::ChangeCenter(position);
 }
 
 void PlayerCore::Draw(sf::RenderWindow* target)

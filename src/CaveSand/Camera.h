@@ -5,8 +5,6 @@
 
 namespace Segratha
 {
-    //NOTE: changing view will change the camera itself btw
-
     class CAMERA
     {
         public:

@@ -2,7 +2,9 @@
 #define CAVESAND_H
 
 #include "Chunk.h"
-#include "../Camera.h"
+#include "ChunkRend.h"
+#include "Camera.h"
+#include "KyleTime.hpp"
 #include <utility>
 #include <vector>
 #include <thread>
@@ -14,8 +16,15 @@ namespace Segratha
         private:
             std::vector<Chunk*> chunks; //Chunks will live on the heap lol
             
-            static CaveSand* inst;
+            const static int numRend = 12; //determines how many renderers we got
+            ChunkRend rend[numRend]; //renderers will live on the heap as well
+
+            static CaveSand* inst; //static instance of this class
             
+            sf::Vector2f lastCamPos = sf::Vector2f(-999, -999); //used to tell if the camera has moved for rendering purposes
+            
+            sf::Vector2f threshold; //if the camera has moved more than the threshold, we gotta realloc
+
             unsigned char cycle; //current update cycle the game is on
             
             /// @brief unloads any chunks that are too far from the player
@@ -28,12 +37,15 @@ namespace Segratha
             /// @param yMod (0 - 1) processes chunk if chunk->yChunk % 2 == yMod
             /// @param threads A reference to the current vector of threads
             void ThreadHelper(int xMod, int yMod, std::vector<std::thread>& threads);
-
         public:
 
             CaveSand();
             ~CaveSand();
             static CaveSand* GetInstance();
+
+            /// @brief Updates everything and renders
+            /// @param target Window to render to
+            void FullRun(sf::RenderWindow* target, float updateTime);
 
             /// @brief loads a particular chunk position
             /// @param x x location of chunk
@@ -46,14 +58,12 @@ namespace Segratha
             /// @return whether the operation was successful
             bool UnLoadAt(int x, int y);
 
-            ///Updates every chunk in the order they were loaded
-            void UpdateAll();
-
             /// @brief Draws EVERY chunk to the screen
             void DrawAll(sf::RenderWindow* target);
 
-            ///@brief Updates in a Checkerboard pattern, works a bit better than UpdateAll(), if a bit slower
-            void UpdateChecker();
+            /// @brief Uses the camera position to determine which chunks are on-screen, then, allocate render chunks to each
+            /// @param target the window to read camera data from
+            void AllocRenderers(sf::RenderWindow* target);
 
             ///@brief Updates all chunks using multiple CPU threads
             void UpdateThreaded();
@@ -77,7 +87,7 @@ namespace Segratha
             //takes in a Cell position and returns a Chunk position
             sf::Vector2i CellToChunkPos(int x, int y);
 
-            //given two Cell objects, return whether they're in the same chunk
+            //given two Cell positions, return whether they're in the same chunk
             bool SameChunk(sf::Vector2i c1, sf::Vector2i c2);
 
             //Cell MOVE FUNCTIONS

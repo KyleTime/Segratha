@@ -2,7 +2,6 @@
 
 #include "CaveSand/CaveSand.h"
 #include "PlayerCore.h"
-#include "KyleTime.hpp"
 
 #include <iostream>
 
@@ -30,23 +29,30 @@ int main()
 
     KyleTime* kTime = KyleTime::GetInstance();
 
+    sf::Font font;
+    font.loadFromFile("minecrap.ttf");
+
     //for(int x = 0; x < 4; x++)
     //    for(int y = 0; y < 3; y++)
     //    {
     //        manager->UnLoadAt(x, y);
     //    }
 
+    sf::Text fps("FPS: " + std::to_string(1.f / KyleTime::DeltaTime()), font, 50);
+
     manager->Set(32, 48, Cell(SAND));
     manager->Set(64 + 32, 48, Cell(SAND));
 
     PlayerCore player;
 
-    float timer = 0;
+    float timer = 0.01f;
     while (window.isOpen())
     {
         KyleTime::UpdateDelta();
 
         player.Update();
+
+        window.setView(CAMERA::view);
 
         sf::Event event;
         while (window.pollEvent(event))
@@ -57,11 +63,7 @@ int main()
 
         window.clear();
 
-        if(timer >= 0.01f)
-        {
-            manager->UpdateThreaded();
-            timer = 0;
-        }
+        manager->FullRun(&window, timer);
 
         static int brush = 0;        
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num0))
@@ -126,22 +128,28 @@ int main()
 
         player.Draw(&window);
 
-        window.display();
-    
-        static bool pause = false;
-        static bool pressed = false;
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !pressed)
-        {
-            pause = !pause;
-            pressed = true;
-        }
-        else if(!sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-        {
-            pressed = false;
-        }
 
-        if(!pause)
-            timer += KyleTime::DeltaTime();
+        fps.setPosition(CAMERA::view.getCenter() - sf::Vector2f(CAMERA::GetScreenWidth()/2, CAMERA::GetScreenHeight()/2));
+        window.draw(fps);
+
+        static float fpsTimer = 0;
+        static float fpsMoment = 0;
+        static float numFrames = 0;
+        if(fpsTimer > 1)
+        {
+            fps.setString("FPS: " + std::to_string(fpsMoment / numFrames));
+            numFrames = 0;
+            fpsMoment = 0;
+            fpsTimer = 0;
+        }
+        else
+        {
+            numFrames++;
+            fpsMoment += 1.f / KyleTime::DeltaTime();
+        }
+        fpsTimer += KyleTime::DeltaTime();
+
+        window.display();
     }
 
     delete manager;

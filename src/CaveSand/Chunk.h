@@ -7,14 +7,13 @@
 
 namespace Segratha
 {
-    const int CHUNK_SIZE = 64;
+    const int CHUNK_SIZE = 128;
     const float CELL_SIZE = 10;
 
     class Chunk
     {
         private:
-            sf::VertexArray vert;
-            
+  
             //xChunk and yChunk refer to the grid of prospective chunks
             //[(0,0)][(1,0)][(2,0)] <- each of these are 64x64 chunks
             //[(0,1)][(1,1)][(2,1)]
@@ -40,8 +39,6 @@ namespace Segratha
 
             //updates every pixel in the chunk
             void ChunkUpdate(unsigned char cycle);
-            //renders the chunk
-            void ChunkDraw(sf::RenderWindow* target);
 
             //At (x, y), tell the chunk a pixel just updated there
             void Touch(int x, int y);

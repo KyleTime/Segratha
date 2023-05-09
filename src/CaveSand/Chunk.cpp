@@ -4,21 +4,8 @@
 using namespace Segratha;
 
 Chunk::Chunk(int xChunk, int yChunk)
-    : vert(sf::Quads, CHUNK_SIZE * CHUNK_SIZE * 4), xChunk(xChunk), yChunk(yChunk)
-{
-    for (int i = 0; i < CHUNK_SIZE * CHUNK_SIZE; ++i) {   
-        
-        // Get the position and size of the cell
-        sf::Vector2f pos((i % CHUNK_SIZE) * CELL_SIZE, (i / CHUNK_SIZE) * CELL_SIZE);
-        pos += sf::Vector2f(xChunk * CELL_SIZE * CHUNK_SIZE, yChunk * CELL_SIZE * CHUNK_SIZE);
-    
-        // Set the position of each vertex
-        vert[i * 4 + 0].position = pos;
-        vert[i * 4 + 1].position = pos + sf::Vector2f(CELL_SIZE, 0);
-        vert[i * 4 + 2].position = pos + sf::Vector2f(CELL_SIZE, CELL_SIZE);
-        vert[i * 4 + 3].position = pos + sf::Vector2f(0, CELL_SIZE);
-    }
-    
+    : xChunk(xChunk), yChunk(yChunk)
+{    
     Load();
 }
 
@@ -71,48 +58,6 @@ void Chunk::ChunkUpdate(unsigned char cycle)
         }
     
     updateCycles -= 1;
-}
-
-void Chunk::ChunkDraw(sf::RenderWindow* target)
-{
-    //set vertex colors
-    for (int i = 0; i < CHUNK_SIZE * CHUNK_SIZE; ++i)
-    {
-        sf::Color cellColor = (cells[(i % CHUNK_SIZE)][(i / CHUNK_SIZE)]).color;
-        
-        vert[i * 4 + 0].color = cellColor;
-        vert[i * 4 + 1].color = cellColor;
-        vert[i * 4 + 2].color = cellColor;
-        vert[i * 4 + 3].color = cellColor;
-    }
-
-    target->draw(vert);
-    
-    /*
-    //chunk border
-    sf::RectangleShape border(sf::Vector2f(CHUNK_SIZE * CELL_SIZE, CHUNK_SIZE * CELL_SIZE));
-    border.setPosition(CELL_SIZE * CHUNK_SIZE * xChunk, CELL_SIZE * CHUNK_SIZE * yChunk);
-    border.setOutlineThickness(10);
-    border.setOutlineColor(sf::Color::Green);
-    border.setFillColor(sf::Color::Transparent);
-    //target->draw(border);
-
-    sf::Vector2i curR1 = rect1;
-    sf::Vector2i curR2 = rect2;
-    
-    curR1.x = curR1.x < 0 ? 0 : curR1.x;
-    curR1.y = curR1.y > CHUNK_SIZE - 1 ? CHUNK_SIZE - 1 : curR1.y;
-
-    curR2.x = curR2.x > CHUNK_SIZE - 1 ? CHUNK_SIZE - 1 : curR2.x;
-    curR2.y = curR2.y < 0 ? 0 : curR2.y;
-
-    //dirtyrect
-    sf::RectangleShape rect(sf::Vector2f((curR2.x - curR1.x) * CELL_SIZE, (curR1.y - curR2.y) * CELL_SIZE));
-    rect.setPosition(curR1.x * CELL_SIZE + CHUNK_SIZE * CELL_SIZE * xChunk, curR2.y * CELL_SIZE + CHUNK_SIZE * CELL_SIZE * yChunk);
-    rect.setFillColor(sf::Color::Transparent);
-    rect.setOutlineThickness(5);
-    rect.setOutlineColor(sf::Color::Red);
-    target->draw(rect);*/
 }
 
 void Chunk::Touch(int x, int y)
