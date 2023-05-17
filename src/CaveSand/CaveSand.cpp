@@ -1,5 +1,4 @@
 #include "CaveSand.h"
-#define RENDCHUNK_SIZE (CHUNK_SIZE / REND_FACTOR)
 
 using namespace Segratha;
 
@@ -69,8 +68,6 @@ void CaveSand::AllocRenderers(sf::RenderWindow* target)
         return;
     }
 
-    lastCamPos = camPos; //make sure we store this shit
-
     //----------------------------------------
 
     //rectangle formula:
@@ -79,7 +76,7 @@ void CaveSand::AllocRenderers(sf::RenderWindow* target)
 
     threshold = sf::Vector2f(999999, 999999);
 
-    float chunkSize = RENDCHUNK_SIZE * CELL_SIZE;
+    float chunkSize = CHUNK_SIZE * CELL_SIZE;
 
     int chunkRendPos = 0; //keep track of the chunk renderer we're looking at
 
@@ -93,45 +90,40 @@ void CaveSand::AllocRenderers(sf::RenderWindow* target)
         if(!c)
             break;
 
-        //calculate pixel position of the top left corner of the chunk
-        sf::Vector2f chunkPos = sf::Vector2f((c->xChunk) * CHUNK_SIZE * CELL_SIZE, (c->yChunk) * CHUNK_SIZE * CELL_SIZE);
-        
-        //look at every subdivision of the chunk (by render)
-        for(int x = 0; x < REND_FACTOR/2; x++)
+        //calculate pixel position of the chunk
+        sf::Vector2f chunkPos = sf::Vector2f((c->xChunk + 0.5f) * chunkSize, (c->yChunk + 0.5f) * chunkSize);
+
+        //is the chunk in the frame?
+        if(abs(chunkPos.x - camPos.x) < chunkSize/2 + camSize.x/2 && abs(chunkPos.y - camPos.y) < chunkSize/2 + camSize.y)
         {
-            for(int y = 0; y < REND_FACTOR/2; y++)
-            {
-                //calculate position of the render chunk
-                sf::Vector2f rendChunkPos = chunkPos + sf::Vector2f(1.f/REND_FACTOR * CHUNK_SIZE * CELL_SIZE, 1.f/REND_FACTOR * CHUNK_SIZE * CELL_SIZE);
+            //allocate a chunk renderer to it:
+            rend[chunkRendPos].Bind(c);
+            chunkRendPos++;
 
-                if(abs(rendChunkPos.x - camPos.x) < chunkSize/2 + camSize.x/2 && abs(rendChunkPos.y - camPos.y) < chunkSize/2 + camSize.y)
-                {
-                    rend[chunkRendPos].Bind(c, rendChunkPos, x * RENDCHUNK_SIZE + y * RENDCHUNK_SIZE * RENDCHUNK_SIZE);
-                    chunkRendPos++;
+            //do funny math to figure out the threshold
+            float xCamR = camPos.x + camSize.x/2; //calculate outer right edge of camera
+            float xCamL = camPos.x - camSize.x/2; //calculate outer left edge of camera
 
-                    //do funny math to figure out the threshold
-                    float xCamR = camPos.x + camSize.x/2; //calculate outer right edge of camera
-                    float xCamL = camPos.x - camSize.x/2; //calculate outer left edge of camera
+            float xChunkR = chunkPos.x + chunkSize/2; //calculate outer right edge of chunk
+            float xChunkL = chunkPos.x - chunkSize/2; //calculate outer left edge of chunk
 
-                    float xChunkR = rendChunkPos.x + chunkSize/2; //calculate outer right edge of chunk
-                    float xChunkL = rendChunkPos.x - chunkSize/2; //calculate outer left edge of chunk
+            threshold.x = __min(__min(abs(xChunkR - xCamR), abs(xChunkL - xCamL)), threshold.x); //figure out which distance is smaller, then compare to current threshold
 
-                    threshold.x = __min(__min(abs(xChunkR - xCamR), abs(xChunkL - xCamL)), threshold.x); //figure out which distance is smaller, then compare to current threshold
+            float yCamU = camPos.y + camSize.y/2; //calculate outer right edge of camera
+            float yCamD = camPos.y - camSize.y/2; //calculate outer left edge of camera
 
-                    float yCamU = camPos.y + camSize.y/2; //calculate outer right edge of camera
-                    float yCamD = camPos.y - camSize.y/2; //calculate outer left edge of camera
+            float yChunkU = chunkPos.y + chunkSize/2; //calculate outer right edge of chunk
+            float yChunkD = chunkPos.y - chunkSize/2; //calculate outer left edge of chunk
 
-                    float yChunkU = rendChunkPos.y + chunkSize/2; //calculate outer right edge of chunk
-                    float yChunkD = rendChunkPos.y - chunkSize/2; //calculate outer left edge of chunk
-
-                    threshold.y = __min(__min(abs(yChunkU - yCamU), abs(yChunkD - yCamD)), threshold.y); //figure out which distance is smaller, then compare to current threshold
-                
-                    if(chunkRendPos == numRend)
-                        return;
-                }
-            }
+            threshold.y = __min(__min(abs(yChunkU - yCamU), abs(yChunkD - yCamD)), threshold.y); //figure out which distance is smaller, then compare to current threshold
         }
+
+        //we out of renderers
+        if(chunkRendPos == numRend)
+            break;
     }
+
+    lastCamPos = camPos; //make sure we store this shit
 }
 
 void CaveSand::ThreadHelper(int xMod, int yMod, std::vector<std::thread>& threads)

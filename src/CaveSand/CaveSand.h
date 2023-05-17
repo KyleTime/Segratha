@@ -16,7 +16,7 @@ namespace Segratha
         private:
             std::vector<Chunk*> chunks; //Chunks will live on the heap lol
             
-            const static int numRend = 12; //determines how many renderers we got
+            const static int numRend = 4; //determines how many renderers we got
             ChunkRend rend[numRend]; //renderers will live on the heap as well
 
             static CaveSand* inst; //static instance of this class

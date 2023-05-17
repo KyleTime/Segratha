@@ -7,8 +7,7 @@
 
 namespace Segratha
 {
-    const int CHUNK_SIZE = 128;
-
+    const int CHUNK_SIZE = 512;
 
     class Chunk
     {
