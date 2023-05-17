@@ -65,6 +65,10 @@ namespace Segratha
             /// @param target the window to read camera data from
             void AllocRenderers(sf::RenderWindow* target);
 
+            /// @brief Uses the camera position to determine which chunks are on-screen, then, allocate render chunks to each
+            /// @param target the window to read camera data from
+            void AllocRenderers2(sf::RenderWindow* target);
+
             ///@brief Updates all chunks using multiple CPU threads
             void UpdateThreaded();
 

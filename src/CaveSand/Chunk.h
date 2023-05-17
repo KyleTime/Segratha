@@ -8,7 +8,7 @@
 namespace Segratha
 {
     const int CHUNK_SIZE = 128;
-    const float CELL_SIZE = 10;
+
 
     class Chunk
     {
