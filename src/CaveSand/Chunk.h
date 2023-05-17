@@ -14,7 +14,7 @@ namespace Segratha
         private:
   
             //xChunk and yChunk refer to the grid of prospective chunks
-            //[(0,0)][(1,0)][(2,0)] <- each of these are 64x64 chunks
+            //[(0,0)][(1,0)][(2,0)] <- each of these are chunks
             //[(0,1)][(1,1)][(2,1)]
             //[(0,2)][(1,2)][(2,2)] #also it can go negative
             //

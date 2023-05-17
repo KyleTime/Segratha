@@ -3,16 +3,11 @@
 using namespace Segratha;
 
 ChunkRend::ChunkRend()
-    : vert(sf::Quads, CHUNK_SIZE * CHUNK_SIZE * 4)
+    : vert(sf::Quads, CHUNK_SIZE * CHUNK_SIZE * 4), transform(sf::Transform::Identity)
 {
-}
-
-void ChunkRend::Bind(Chunk* c)
-{
-    for (int i = 0; i < CHUNK_SIZE * CHUNK_SIZE; ++i) {   
+        for (int i = 0; i < CHUNK_SIZE * CHUNK_SIZE; ++i) {   
         // Get the position and size of the cell
         sf::Vector2f pos((i % CHUNK_SIZE) * CELL_SIZE, (i / CHUNK_SIZE) * CELL_SIZE);
-        pos += sf::Vector2f(c->xChunk * CELL_SIZE * CHUNK_SIZE, c->yChunk * CELL_SIZE * CHUNK_SIZE);
 
         // Set the position of each vertex
         vert[i * 4 + 0].position = pos;
@@ -20,18 +15,27 @@ void ChunkRend::Bind(Chunk* c)
         vert[i * 4 + 2].position = pos + sf::Vector2f(CELL_SIZE, CELL_SIZE);
         vert[i * 4 + 3].position = pos + sf::Vector2f(0, CELL_SIZE);
     }
+}
+
+void ChunkRend::Bind(Chunk* c)
+{
+    active = true; //tell the renderchunk that it's active
+    
+    transform = transform.Identity;
+    transform.translate(c->xChunk * CHUNK_SIZE * CELL_SIZE, c->yChunk * CHUNK_SIZE * CELL_SIZE); //translate by chunk
 
     bound = c;
 }
 
 void ChunkRend::Unbind()
 {
+    active = false;
     bound = nullptr;
 }
 
 void ChunkRend::ChunkDraw(sf::RenderWindow* target)
 {
-    if(!bound)
+    if(!active)
         return;
 
         //set vertex colors
@@ -45,7 +49,7 @@ void ChunkRend::ChunkDraw(sf::RenderWindow* target)
         vert[i * 4 + 3].color = cellColor;
     }
 
-    target->draw(vert);
+    target->draw(vert, transform);
 
     /*
     //chunk border
