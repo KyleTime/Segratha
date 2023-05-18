@@ -37,7 +37,7 @@ void CaveSand::FullRun(sf::RenderWindow* target, float updateTime)
     timer += KyleTime::DeltaTime();
 
     //then, allocate render chunks
-    AllocRenderers(target);
+    RenderGroup(target);
 
     //Finally, draw all render chunks
     DrawAll(target);
@@ -52,82 +52,9 @@ void CaveSand::DrawAll(sf::RenderWindow* target)
     }
 }
 
-void CaveSand::AllocRenderers(sf::RenderWindow* target)
-{
-    //grab view
-    sf::View view = target->getView();
-
-    sf::Vector2f camPos = view.getCenter(); //grab the camera position
-    sf::Vector2f camSize = view.getSize(); //grab camera size
-
-    //DO I HAVE TO?---------------------------
-
-    if(abs(camPos.x - lastCamPos.x) < threshold.x && abs(camPos.y - lastCamPos.y) < threshold.y)
-    {
-        //NO
-        return;
-    }
-
-    //----------------------------------------
-
-    //rectangle formula:
-    //rect1, rect2
-    //if(abs(rect1.x - rect2.x) < rect1.xSize/2 + rect2.xSize/2 && abs(rect1.y - rect2.y) < rect1.ySize/2 + rect2.ySize/2)
-
-    threshold = sf::Vector2f(999999, 999999);
-
-    float chunkSize = CHUNK_SIZE * CELL_SIZE;
-
-    int chunkRendPos = 0; //keep track of the chunk renderer we're looking at
-
-    for(int i = 0; i < numRend; i++)
-        rend[i].Unbind();
-
-    for(int i = 0; i < chunks.size(); i++)
-    {
-        Chunk* c = chunks[i];
-
-        if(!c)
-            break;
-
-        //calculate pixel position of the chunk
-        sf::Vector2f chunkPos = sf::Vector2f((c->xChunk + 0.5f) * chunkSize, (c->yChunk + 0.5f) * chunkSize);
-
-        //is the chunk in the frame?
-        if(abs(chunkPos.x - camPos.x) < chunkSize/2 + camSize.x/2 && abs(chunkPos.y - camPos.y) < chunkSize/2 + camSize.y)
-        {
-            //allocate a chunk renderer to it:
-            rend[chunkRendPos].Bind(c);
-            chunkRendPos++;
-
-            //do funny math to figure out the threshold
-            float xCamR = camPos.x + camSize.x/2; //calculate outer right edge of camera
-            float xCamL = camPos.x - camSize.x/2; //calculate outer left edge of camera
-
-            float xChunkR = chunkPos.x + chunkSize/2; //calculate outer right edge of chunk
-            float xChunkL = chunkPos.x - chunkSize/2; //calculate outer left edge of chunk
-
-            threshold.x = __min(__min(abs(xChunkR - xCamR), abs(xChunkL - xCamL)), threshold.x); //figure out which distance is smaller, then compare to current threshold
-
-            float yCamU = camPos.y + camSize.y/2; //calculate outer right edge of camera
-            float yCamD = camPos.y - camSize.y/2; //calculate outer left edge of camera
-
-            float yChunkU = chunkPos.y + chunkSize/2; //calculate outer right edge of chunk
-            float yChunkD = chunkPos.y - chunkSize/2; //calculate outer left edge of chunk
-
-            threshold.y = __min(__min(abs(yChunkU - yCamU), abs(yChunkD - yCamD)), threshold.y); //figure out which distance is smaller, then compare to current threshold
-        }
-
-        //we out of renderers
-        if(chunkRendPos == numRend)
-            break;
-    }
-
-    lastCamPos = camPos; //make sure we store this shit
-}
-
 void CaveSand::RenderGroup(sf::RenderWindow* target)
 {
+
     //grab view
     sf::View view = target->getView();
 
@@ -154,22 +81,29 @@ void CaveSand::RenderGroup(sf::RenderWindow* target)
 
     int chunkRendPos = 0; //keep track of the chunk renderer we're looking at
 
-    for(int i = 0; i < chunks.size(); i++)
+    sf::Vector2i min = (sf::Vector2i((camPos.x - camSize.x/2)/CELL_SIZE, (camPos.y - camSize.y/2)/CELL_SIZE)); //calculate where cell at top left of camera is located
+    sf::Vector2i max = (sf::Vector2i((camPos.x + camSize.x/2)/CELL_SIZE, (camPos.y + camSize.y/2)/CELL_SIZE)); //calculate where cell at bottom right of camera is located
+
+    sf::Vector2i minPos = sf::Vector2i(min.x/(REND_SIZE), min.y/(REND_SIZE)); //get chunk pos of min
+    sf::Vector2i maxPos = sf::Vector2i(max.x/(REND_SIZE), max.y/(REND_SIZE)); //get chunk pos of max
+
+    std::cout << "Chunk Size: " << chunkSize << std::endl;
+    std::cout << "min screen: " << min.x << ", " << min.y << " max screen: " << max.x << ", " << max.y << std::endl;
+    std::cout << "min: " << minPos.x << ", " << minPos.y << " max: " << maxPos.x << ", " << maxPos.y << std::endl;
+
+    for(int x = minPos.x; x <= maxPos.x; x++)
     {
-        Chunk* c = chunks[i];
-
-        if(!c)
-            break;
-
-        //calculate pixel position of the chunk
-        sf::Vector2f chunkPos = sf::Vector2f((c->xChunk + 0.5f) * chunkSize, (c->yChunk + 0.5f) * chunkSize);
-
-        //is the chunk in the frame?
-        if(abs(chunkPos.x - camPos.x) < chunkSize/2 + camSize.x/2 && abs(chunkPos.y - camPos.y) < chunkSize/2 + camSize.y)
+        for(int y = minPos.y; y <= maxPos.y; y++)
         {
-            //allocate a chunk renderer to it:
-            rend[chunkRendPos].Bind(c);
-            chunkRendPos++;
+            Chunk* c = GetChunkCell(x*REND_SIZE, y*REND_SIZE);
+
+            if(c == nullptr)
+                continue;
+
+            rend[chunkRendPos].Bind(x, y, c); //Bind the render chunk
+            chunkRendPos++; //increment render counter
+
+            sf::Vector2f chunkPos = sf::Vector2f((x + 0.5f) * chunkSize, (y + 0.5f) * chunkSize);
 
             //do funny math to figure out the threshold
             float xCamR = camPos.x + camSize.x/2; //calculate outer right edge of camera
@@ -187,13 +121,17 @@ void CaveSand::RenderGroup(sf::RenderWindow* target)
             float yChunkD = chunkPos.y - chunkSize/2; //calculate outer left edge of chunk
 
             threshold.y = __min(__min(abs(yChunkU - yCamU), abs(yChunkD - yCamD)), threshold.y); //figure out which distance is smaller, then compare to current threshold
+
+            //we out of renderers
+            if(chunkRendPos >= numRend)
+                break;
         }
 
         //we out of renderers
-        if(chunkRendPos == numRend)
+        if(chunkRendPos >= numRend)
             break;
     }
-
+ 
     lastCamPos = camPos; //make sure we store this shit
 }
 
@@ -344,6 +282,16 @@ sf::Vector2i CaveSand::ScreenToCell(sf::Vector2i pos)
     fin.y /= CELL_SIZE / CAMERA::zoom;
 
     return fin;
+}
+
+sf::Vector2i CaveSand::WorldToCell(sf::Vector2f world)
+{
+    sf::Vector2f fin = world;
+
+    //change units to cells
+    world /= CELL_SIZE;
+
+    return (sf::Vector2i)fin;
 }
 
 sf::Vector2i CaveSand::CellToChunkPos(int x, int y)

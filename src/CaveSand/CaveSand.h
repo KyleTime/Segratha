@@ -16,7 +16,7 @@ namespace Segratha
         private:
             std::vector<Chunk*> chunks; //Chunks will live on the heap lol
             
-            const static int numRend = 4; //determines how many renderers we got
+            const static int numRend = 15; //determines how many renderers we got
             ChunkRend rend[numRend]; //renderers will live on the heap as well
 
             static CaveSand* inst; //static instance of this class
@@ -61,10 +61,6 @@ namespace Segratha
             /// @brief Draws EVERY chunk to the screen
             void DrawAll(sf::RenderWindow* target);
 
-            /// @brief Uses the camera position to determine which chunks are on-screen, then, allocate render chunks to each
-            /// @param target the window to read camera data from
-            void AllocRenderers(sf::RenderWindow* target);
-
             /// @brief puts each chunk renderer on its place in the screen, they'll figure out chunks later
             /// @param target the window to read camera data from
             void RenderGroup(sf::RenderWindow* target);
@@ -85,8 +81,17 @@ namespace Segratha
             //given Cell coordinates, return a Cell*
             Cell* GetCellAt(int x, int y);
 
-            //given a screen position in Cells, calculate which Cell is located there
+            //NOTE ABOUT WORLD AND SCREEN: 
+            //screen coordinates begin at the top left of the screen at 0, 0 and go to the width and height of the window
+            //world coordinates begin at a point in the world at 0, 0 and go to infinity
+            //
+            //IMPORTANT: both are on the same scale by default, but zoom will make world coordinates smaller or bigger
+
+            //given a screen position, calculate which Cell is located there
             sf::Vector2i ScreenToCell(sf::Vector2i screen);
+
+            //given a world position, output a cell position
+            sf::Vector2i WorldToCell(sf::Vector2f world);
 
             //takes in a Cell position and returns a Chunk position
             sf::Vector2i CellToChunkPos(int x, int y);

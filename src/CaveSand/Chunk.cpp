@@ -24,7 +24,6 @@ void Chunk::Load()
         {
             //TODO: grab Cells from disk
             cells[x][y] = Cell(AIR);
-            cells[x][y].color = sf::Color(x % 16, y % 16, x % 16, 255);
         }
     }
 }

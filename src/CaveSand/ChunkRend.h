@@ -7,7 +7,8 @@
 namespace Segratha
 {
     const float CELL_SIZE = 10;
-    const int REND_SIZE = CHUNK_SIZE / 4;
+    const int DIVISOR = 4; //how many times will we split each chunk for rendering?
+    const int REND_SIZE = CHUNK_SIZE / DIVISOR;
 
     class ChunkRend
     {
@@ -15,13 +16,14 @@ namespace Segratha
             sf::VertexArray vert;
             sf::Transform transform;
             Chunk* bound;
+            sf::Vector2i position; //position in render chunk coordinates
             bool active = false;
 
         public:
             ChunkRend();
 
             /// @brief Given a render chunk position, align self to that position 
-            void Bind(Chunk* c);
+            void Bind(int x, int y, Chunk* c);
 
             /// @brief until the next Bind(), the chunk is inactive
             void Unbind();
