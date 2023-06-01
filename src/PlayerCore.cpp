@@ -3,6 +3,8 @@
 #include "CaveSand/KyleTime.hpp"
 #include "CaveSand/Camera.h"
 
+#include <iostream>
+
 using namespace Segratha;
 
 PlayerCore::PlayerCore()
@@ -15,21 +17,29 @@ PlayerCore::~PlayerCore() {}
 void PlayerCore::Update()
 {
     float speed = 1000;
+
+    float mod = 1;
+
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+        mod = 5;
+    else
+        mod = 1;
+    
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     {
-        position.y -= speed * KyleTime::DeltaTime();
+        position.y -= speed * mod * KyleTime::DeltaTime();
     }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
     {
-        position.y += speed * KyleTime::DeltaTime();
+        position.y += speed * mod * KyleTime::DeltaTime();
     }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
     {
-        position.x += speed * KyleTime::DeltaTime();
+        position.x += speed * mod * KyleTime::DeltaTime();
     }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
     {
-        position.x -= speed * KyleTime::DeltaTime();
+        position.x -= speed * mod * KyleTime::DeltaTime();
     }
 
     CAMERA::ChangeCenter(position);

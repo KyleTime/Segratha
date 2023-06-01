@@ -28,6 +28,8 @@ void CaveSand::FullRun(sf::RenderWindow* target, float updateTime)
 {
     static float timer = 0;
 
+    Autoload(target);
+
     //first, update all cells
     if(timer > updateTime)
     {
@@ -54,7 +56,6 @@ void CaveSand::DrawAll(sf::RenderWindow* target)
 
 void CaveSand::RenderGroup(sf::RenderWindow* target)
 {
-
     //grab view
     sf::View view = target->getView();
 
@@ -86,10 +87,6 @@ void CaveSand::RenderGroup(sf::RenderWindow* target)
 
     sf::Vector2i minPos = sf::Vector2i(min.x/(REND_SIZE), min.y/(REND_SIZE)); //get chunk pos of min
     sf::Vector2i maxPos = sf::Vector2i(max.x/(REND_SIZE), max.y/(REND_SIZE)); //get chunk pos of max
-
-    std::cout << "Chunk Size: " << chunkSize << std::endl;
-    std::cout << "min screen: " << min.x << ", " << min.y << " max screen: " << max.x << ", " << max.y << std::endl;
-    std::cout << "min: " << minPos.x << ", " << minPos.y << " max: " << maxPos.x << ", " << maxPos.y << std::endl;
 
     for(int x = minPos.x; x <= maxPos.x; x++)
     {
@@ -194,14 +191,83 @@ void CaveSand::UpdateThreaded()
     //-----------------------------------------------
 }
 
-void CaveSand::Autoload(sf::Vector2f pos)
+void CaveSand::Autoload(sf::RenderWindow* target)
 {
-    float screenX = CAMERA::GetScreenWidth();
-    float screenY = CAMERA::GetScreenHeight();
+    //so basically here's how this is going to go
+    //
+    //   we're going to say that whenever the player gets close enough to a new chunk, we load new chunks and unload the furthest away
+    // to do that, we're going to need the player chunk pos
+
+    static sf::Vector2i playerCell = sf::Vector2i(99999, 99999);
+
+    //player cell pos right now
+    sf::Vector2i cellPos = WorldToCell(target->getView().getCenter());
+
+    //if the partial chunk pos hasn't changed, we don't need to worry
+    if(playerCell / (CHUNK_SIZE / 4) == cellPos / (CHUNK_SIZE / 4))
+        return;
+
+    playerCell = cellPos;
+
+    sf::Vector2i chunkPos = cellPos / CHUNK_SIZE;
+
+    //LOAD NEW CHUNKS----------------------------------------
+    sf::Vector2i relPos = sf::Vector2i();
+
+    //left side
+    if(cellPos.x % CHUNK_SIZE < CHUNK_SIZE / 2)
+    {
+        relPos.x = -1;
+    }
+    //right side
+    else
+    {
+        relPos.x = 1;
+    }
+
+    //top side
+    if(cellPos.y % CHUNK_SIZE < CHUNK_SIZE / 2)
+    {
+        relPos.y = -1;
+    }
+    //bottom side
+    else
+    {
+        relPos.y = 1;
+    }
+
+    //load chunk I'm in
+    LoadAt(chunkPos.x, chunkPos.y);
+
+    //load new chunks
+    LoadAt(chunkPos.x + relPos.x, chunkPos.y + relPos.y);
+    LoadAt(chunkPos.x + relPos.x, chunkPos.y);
+    LoadAt(chunkPos.x, chunkPos.y + relPos.y);
+
+    //check number of chunks
+    int size = chunks.size();
+
+    //eliminate chunks that are farther than 1 unit away from the current chunk until there are only 12
+    for(auto i = chunks.begin(); i != chunks.end() && chunks.size() > 12; i++)
+    {
+        Chunk* c = *i;
+        if(abs(c->xChunk - chunkPos.x) > 1 || abs(c->yChunk - chunkPos.y) > 1)
+        {
+            chunks.erase(i);
+            //i--;
+        }
+    }
 }
 
 bool CaveSand::LoadAt(int x, int y)
 {
+    //check if the chunk already exists
+    if(GetChunk(x, y))
+    {
+        FullTouch(x, y);
+        return false;
+    }
+
     chunks.push_back(new Chunk(x, y));
     return true;
 }
@@ -240,7 +306,7 @@ Chunk* CaveSand::GetChunk(int xChunk, int yChunk)
 Chunk* CaveSand::GetChunkCell(int xCell, int yCell)
 {
     if(xCell < 0 || yCell < 0)
-        return nullptr;
+       return nullptr;
 
     int xChunk = xCell / CHUNK_SIZE;
     int yChunk = yCell / CHUNK_SIZE;
@@ -256,7 +322,7 @@ Cell* CaveSand::GetCellAt(int x, int y)
 
     if(chunk != nullptr)
     {
-        return &chunk->cells[x % CHUNK_SIZE][y % CHUNK_SIZE];
+        return &chunk->cells[(x + CHUNK_SIZE) % CHUNK_SIZE][(y + CHUNK_SIZE) % CHUNK_SIZE];
     }
     else
     {
@@ -289,7 +355,7 @@ sf::Vector2i CaveSand::WorldToCell(sf::Vector2f world)
     sf::Vector2f fin = world;
 
     //change units to cells
-    world /= CELL_SIZE;
+    fin /= CELL_SIZE;
 
     return (sf::Vector2i)fin;
 }
@@ -302,6 +368,14 @@ sf::Vector2i CaveSand::CellToChunkPos(int x, int y)
 bool CaveSand::SameChunk(sf::Vector2i c1, sf::Vector2i c2)
 {
     return CellToChunkPos(c1.x, c1.y) == CellToChunkPos(c2.x, c2.y);
+}
+
+void CaveSand::FullTouch(int x, int y)
+{
+    Chunk* c = GetChunk(x, y);
+
+    Touch(0, 0, c);
+    Touch(CHUNK_SIZE - 1, CHUNK_SIZE - 1, c);
 }
 
 //Cell MANAGEMENT
@@ -350,7 +424,7 @@ void CaveSand::Set(int x, int y, Cell p)
 {
     Chunk* chunk = GetChunkCell(x, y);
 
-    Set(x % CHUNK_SIZE, y % CHUNK_SIZE, p, chunk);
+    Set((x + CHUNK_SIZE) % CHUNK_SIZE, (y + CHUNK_SIZE) % CHUNK_SIZE, p, chunk);
 }
 
 void CaveSand::Set(int x, int y, Cell p, Chunk* chunk)

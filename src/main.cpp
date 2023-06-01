@@ -21,22 +21,13 @@ int main()
     window.setView(CAMERA::view);
 
     CaveSand* manager = CaveSand::GetInstance();
-    for(int x = 0; x < 4; x++)
-        for(int y = 0; y < 8; y++)
-        {
-            manager->LoadAt(x, y);
-        }
+    //manager->LoadAt(-1, 0);
+    //manager->LoadAt(0, 0);
 
     KyleTime::GetInstance();
 
     sf::Font font;
     font.loadFromFile("minecrap.ttf");
-
-    //for(int x = 0; x < 4; x++)
-    //    for(int y = 0; y < 3; y++)
-    //    {
-    //        manager->UnLoadAt(x, y);
-    //    }
 
     sf::Text fps("FPS: " + std::to_string(1.f / KyleTime::DeltaTime()), font, 50);
 
@@ -62,7 +53,7 @@ int main()
         //---------------------------------------------------------------------------------------------------------------------------------------
 
         //BRUSH CODE -----------------------------------------------------------------------------------
-
+        
         static int brush = 0;        
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
         {

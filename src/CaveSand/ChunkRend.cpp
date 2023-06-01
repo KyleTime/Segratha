@@ -40,11 +40,15 @@ void ChunkRend::ChunkDraw(sf::RenderWindow* target)
     if(!active)
         return;
 
+    int startX = ((position.x) % DIVISOR)*REND_SIZE;
+    int startY = ((position.y) % DIVISOR)*REND_SIZE;
+
     for(int x = 0; x < REND_SIZE; x++)
         for(int y = 0; y < REND_SIZE; y++)
         {
             int i = x + y * REND_SIZE;
-            sf::Color cellColor = (bound->cells[x + (position.x % DIVISOR)*REND_SIZE][y + (position.y % DIVISOR)*REND_SIZE]).color;
+
+            sf::Color cellColor = (bound->cells[(x + startX) % CHUNK_SIZE][(y + startY) % CHUNK_SIZE]).color;
 
             vert[i * 4 + 0].color = cellColor;
             vert[i * 4 + 1].color = cellColor;

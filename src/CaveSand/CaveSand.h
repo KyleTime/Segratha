@@ -16,27 +16,37 @@ namespace Segratha
         private:
             std::vector<Chunk*> chunks; //Chunks will live on the heap lol
             
-            const static int numRend = 15; //determines how many renderers we got
+            const static int numRend = 144; //determines how many renderers we got
             ChunkRend rend[numRend]; //renderers will live on the heap as well
 
             static CaveSand* inst; //static instance of this class
             
             sf::Vector2f lastCamPos = sf::Vector2f(-999, -999); //used to tell if the camera has moved for rendering purposes
             
-            sf::Vector2f threshold; //if the camera has moved more than the threshold, we gotta realloc
+            sf::Vector2f threshold; //if the camera has moved more than the threshold, we gotta realloc renderers
 
             unsigned char cycle; //current update cycle the game is on
-            
-            /// @brief unloads any chunks that are too far from the player
-            void UnloadChunks();
-            /// @brief loads in any needed chunks that the player is close to
-            void LoadChunks();
 
             /// @brief Runs through the process of multithreading a set of chunks
             /// @param xMod (0 - 1) processes chunk if chunk->xChunk % 2 == xMod
             /// @param yMod (0 - 1) processes chunk if chunk->yChunk % 2 == yMod
             /// @param threads A reference to the current vector of threads
             void ThreadHelper(int xMod, int yMod, std::vector<std::thread>& threads);
+
+            /// @brief Draws EVERY chunk to the screen
+            void DrawAll(sf::RenderWindow* target);
+
+            /// @brief puts each chunk renderer on its place in the screen, they'll figure out chunks later
+            /// @param target the window to read camera data from
+            void RenderGroup(sf::RenderWindow* target);
+
+            ///@brief Updates all chunks using multiple CPU threads
+            void UpdateThreaded();
+
+            /// @brief Given a chunk position, fully update that chunk
+            /// @param x chunk x position
+            /// @param y chunk y position
+            void FullTouch(int x, int y);
         public:
 
             CaveSand();
@@ -58,19 +68,9 @@ namespace Segratha
             /// @return whether the operation was successful
             bool UnLoadAt(int x, int y);
 
-            /// @brief Draws EVERY chunk to the screen
-            void DrawAll(sf::RenderWindow* target);
-
-            /// @brief puts each chunk renderer on its place in the screen, they'll figure out chunks later
-            /// @param target the window to read camera data from
-            void RenderGroup(sf::RenderWindow* target);
-
-            ///@brief Updates all chunks using multiple CPU threads
-            void UpdateThreaded();
-
             /// @brief Based on the position given, it figures out what chunks must be loaded or unloaded.
             /// @param position position to focus on, generally the player.
-            void Autoload(sf::Vector2f position);
+            void Autoload(sf::RenderWindow* target);
 
             ///@brief given coordinates on the chunk grid, grab that chunk and return a pointer
             Chunk* GetChunk(int xChunk, int yChunk);

@@ -11,7 +11,6 @@ Chunk::Chunk(int xChunk, int yChunk)
 
 Chunk::~Chunk()
 {
-    std::cout << "Unloaded" << std::endl;
     Unload(); //unload on destroy
 }
 

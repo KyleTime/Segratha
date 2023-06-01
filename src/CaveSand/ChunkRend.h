@@ -7,7 +7,7 @@
 namespace Segratha
 {
     const float CELL_SIZE = 10;
-    const int DIVISOR = 4; //how many times will we split each chunk for rendering?
+    const int DIVISOR = 16; //how many times will we split each chunk for rendering?
     const int REND_SIZE = CHUNK_SIZE / DIVISOR;
 
     class ChunkRend
