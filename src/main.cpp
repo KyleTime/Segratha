@@ -76,13 +76,17 @@ int main()
 
             mouse = manager->ScreenToCell(mouse);
 
+            int brushSize = 20;
+
             switch(brush)
             {
                 case 0:
                     manager->Set(mouse.x, mouse.y, Cell(SOLID));
                     break;
                 case 1:
-                    manager->Set(mouse.x, mouse.y, Cell(SAND));
+                    for(int x = -brushSize; x <= brushSize; x++)
+                        for(int y = -brushSize; y <= brushSize; y++)
+                            manager->Set(mouse.x + x, mouse.y + y, Cell(SAND));
                     break;
                 case 2:
                     manager->Set(mouse.x, mouse.y, Cell(AIR));
