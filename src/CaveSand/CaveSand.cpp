@@ -85,7 +85,7 @@ void CaveSand::RenderGroup(sf::RenderWindow* target)
     sf::Vector2i min = (sf::Vector2i((camPos.x - camSize.x/2)/CELL_SIZE, (camPos.y - camSize.y/2)/CELL_SIZE)); //calculate where cell at top left of camera is located
     sf::Vector2i max = (sf::Vector2i((camPos.x + camSize.x/2)/CELL_SIZE, (camPos.y + camSize.y/2)/CELL_SIZE)); //calculate where cell at bottom right of camera is located
 
-    sf::Vector2i minPos = sf::Vector2i(min.x/(REND_SIZE), min.y/(REND_SIZE)); //get chunk pos of min
+    sf::Vector2i minPos = sf::Vector2i(min.x/(REND_SIZE) - 1, min.y/(REND_SIZE) - 1); //get chunk pos of min
     sf::Vector2i maxPos = sf::Vector2i(max.x/(REND_SIZE), max.y/(REND_SIZE)); //get chunk pos of max
 
     for(int x = minPos.x; x <= maxPos.x; x++)
@@ -310,6 +310,11 @@ Chunk* CaveSand::GetChunkCell(int xCell, int yCell)
 
     int xChunk = xCell / CHUNK_SIZE;
     int yChunk = yCell / CHUNK_SIZE;
+
+    if(xCell < 0)
+        xChunk -= 1;
+    if(yCell < 0)
+        yChunk -= 1;
 
     Chunk* chunk = GetChunk(xChunk, yChunk);
 
