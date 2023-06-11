@@ -40,8 +40,29 @@ void ChunkRend::ChunkDraw(sf::RenderWindow* target)
     if(!active)
         return;
 
+    /*
     int startX = ((position.x) % DIVISOR)*REND_SIZE;
     int startY = ((position.y) % DIVISOR)*REND_SIZE;
+
+    if(startX < 0)
+        startX += CHUNK_SIZE - 1;
+
+    if(startY < 0)
+        startY += CHUNK_SIZE - 1;
+
+    if(startX < 0 || startY < 0)
+    {
+        return;
+    }*/
+
+    int startX = (position.x * REND_SIZE) - bound->xChunk*CHUNK_SIZE;
+    int startY = (position.y * REND_SIZE) - bound->yChunk*CHUNK_SIZE;
+
+    if(startX < 0 || startY < 0)
+    {
+        //std::cout << "FUCK startX: " << startX << ", " << startY << " chunk: " << bound->xChunk << ", " << bound->yChunk << std::endl;
+        return;
+    }
 
     for(int x = 0; x < REND_SIZE; x++)
         for(int y = 0; y < REND_SIZE; y++)
@@ -72,7 +93,16 @@ void ChunkRend::ChunkDraw(sf::RenderWindow* target)
     sf::RectangleShape rect(sf::Vector2f(REND_SIZE * CELL_SIZE, REND_SIZE * CELL_SIZE));
     rect.setPosition(sf::Vector2f(CELL_SIZE * REND_SIZE * position.x, CELL_SIZE * REND_SIZE * position.y));
     rect.setOutlineThickness(10);
-    rect.setOutlineColor(sf::Color::Green);
+    
+    if(position.x < 0 && position.y < 0)
+        rect.setOutlineColor(sf::Color::Red);
+    else if(position.x < 0)
+        rect.setOutlineColor(sf::Color::Yellow);
+    else if(position.y < 0)
+        rect.setOutlineColor(sf::Color::Magenta);
+    else
+        rect.setOutlineColor(sf::Color::Green);
+
     rect.setFillColor(sf::Color::Transparent);
     target->draw(rect);
 

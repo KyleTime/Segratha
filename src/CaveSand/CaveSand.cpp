@@ -305,8 +305,8 @@ Chunk* CaveSand::GetChunk(int xChunk, int yChunk)
 
 Chunk* CaveSand::GetChunkCell(int xCell, int yCell)
 {
-    if(xCell < 0 || yCell < 0)
-       return nullptr;
+    //if(xCell < 0 || yCell < 0)
+    //   return nullptr;
 
     int xChunk = xCell / CHUNK_SIZE;
     int yChunk = yCell / CHUNK_SIZE;
@@ -424,7 +424,7 @@ void CaveSand::Set(int x, int y, Cell p)
 {
     Chunk* chunk = GetChunkCell(x, y);
 
-    Set((x + CHUNK_SIZE) % CHUNK_SIZE, (y + CHUNK_SIZE) % CHUNK_SIZE, p, chunk);
+    Set((x % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE, (y % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE, p, chunk);
 }
 
 void CaveSand::Set(int x, int y, Cell p, Chunk* chunk)
