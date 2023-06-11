@@ -55,8 +55,8 @@ void ChunkRend::ChunkDraw(sf::RenderWindow* target)
         return;
     }*/
 
-    int startX = (position.x * REND_SIZE) - bound->xChunk*CHUNK_SIZE;
-    int startY = (position.y * REND_SIZE) - bound->yChunk*CHUNK_SIZE;
+    int startX = (position.x % DIVISOR) * REND_SIZE;
+    int startY = (position.y % DIVISOR) * REND_SIZE;
 
     if(startX < 0 || startY < 0)
     {
