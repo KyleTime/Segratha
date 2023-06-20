@@ -141,7 +141,7 @@ void CaveSand::ThreadHelper(int xMod, int yMod, std::vector<std::thread>& thread
     for (auto& chunk : chunks) {
 
         //test whether "chunk" part of the first pass
-        if(chunk->xChunk % 2 == xMod && chunk->yChunk % 2 == yMod)
+        if(abs(chunk->xChunk % 2) == xMod && abs(chunk->yChunk % 2) == yMod)
         {
             //create a lambda that takes in the chunk and the cycle, then updates the chunk, and add it to threads
             threads.emplace_back([&chunk, &cycle]() {
@@ -311,9 +311,9 @@ Chunk* CaveSand::GetChunkCell(int xCell, int yCell)
     int xChunk = xCell / CHUNK_SIZE;
     int yChunk = yCell / CHUNK_SIZE;
 
-    if(xCell < 0)
+    if(xCell < 0 && xCell % CHUNK_SIZE != 0)
         xChunk -= 1;
-    if(yCell < 0)
+    if(yCell < 0 && yCell % CHUNK_SIZE != 0)
         yChunk -= 1;
 
     Chunk* chunk = GetChunk(xChunk, yChunk);
@@ -419,6 +419,9 @@ bool CaveSand::Move(int fromX, int fromY, int toX, int toY)
     }
     else //if not air, stop
     {
+        if(c == nullptr)
+            std::cout << "got null chunk at cell position: " << toX << ", " << toY << std::endl;
+
         return false;
     }
 

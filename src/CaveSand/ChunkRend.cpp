@@ -37,6 +37,15 @@ void ChunkRend::Unbind()
 
 void ChunkRend::ChunkDraw(sf::RenderWindow* target)
 {
+    //THIS DEBUG THINGY MAKES EACH RENDER CHUNK SHOW WHERE IT IS
+    /*
+    sf::Font font;
+    font.loadFromFile("minecrap.ttf");
+    sf::Text rendPos("", font, 50);
+    rendPos.setString("(" + std::to_string(position.x) + ", " + std::to_string(position.y) + ")");
+    rendPos.setPosition(sf::Vector2f(REND_SIZE * CELL_SIZE * position.x, REND_SIZE * CELL_SIZE * position.y));
+    target->draw(rendPos);*/
+
     if(!active)
         return;
 
@@ -61,18 +70,21 @@ void ChunkRend::ChunkDraw(sf::RenderWindow* target)
     startX -= bound->xChunk * CHUNK_SIZE;
     startY -= bound->yChunk * CHUNK_SIZE;
 
-    if(startX < 0 || startY < 0)
-    {
+    startX %= CHUNK_SIZE;
+    startY %= CHUNK_SIZE;
+
+    //if(startX < 0 || startY < 0)
+    //{
         //std::cout << "FUCK startX: " << startX << ", " << startY << " chunk: " << bound->xChunk << ", " << bound->yChunk << std::endl;
-        return;
-    }
+    //    return;
+    //}
 
     for(int x = 0; x < REND_SIZE; x++)
         for(int y = 0; y < REND_SIZE; y++)
         {
             int i = x + y * REND_SIZE;
 
-            sf::Color cellColor = (bound->cells[(x + startX) % CHUNK_SIZE][(y + startY) % CHUNK_SIZE]).color;
+            sf::Color cellColor = (bound->cells[(x + startX)][(y + startY)]).color;
 
             vert[i * 4 + 0].color = cellColor;
             vert[i * 4 + 1].color = cellColor;
@@ -97,6 +109,9 @@ void ChunkRend::ChunkDraw(sf::RenderWindow* target)
     rect.setPosition(sf::Vector2f(CELL_SIZE * REND_SIZE * position.x, CELL_SIZE * REND_SIZE * position.y));
     rect.setOutlineThickness(10);
     
+    /*
+    if(abs(position.x % DIVISOR) == DIVISOR - 1)
+        rect.setOutlineColor(sf::Color::White);
     if(position.x < 0 && position.y < 0)
         rect.setOutlineColor(sf::Color::Red);
     else if(position.x < 0)
@@ -105,9 +120,26 @@ void ChunkRend::ChunkDraw(sf::RenderWindow* target)
         rect.setOutlineColor(sf::Color::Magenta);
     else
         rect.setOutlineColor(sf::Color::Green);
+    */
+
+    int color = abs(bound->xChunk) % 3;
+
+    switch(color)
+    {
+        case 0:
+            rect.setOutlineColor(sf::Color::Red);
+            break;
+        case 1:
+            rect.setOutlineColor(sf::Color::Green);
+            break;
+        case 2:
+            rect.setOutlineColor(sf::Color::Cyan);
+            break;
+    }
 
     rect.setFillColor(sf::Color::Transparent);
     target->draw(rect);
+
 
     /*
     //chunk border

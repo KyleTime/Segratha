@@ -33,7 +33,8 @@ int main()
 
     PlayerCore player;
     
-    
+    sf::Text mousePos("MOUSE: ", font, 50);
+
     float timer = 0.01f;
     while (window.isOpen())
     {
@@ -52,6 +53,13 @@ int main()
         }
         //---------------------------------------------------------------------------------------------------------------------------------------
 
+
+        window.clear(); //clear window for rendering
+
+        manager->FullRun(&window, timer); //update the CaveSand engine and draw it
+
+        player.Draw(&window); //draw player character to screen
+
         //BRUSH CODE -----------------------------------------------------------------------------------
         
         static int brush = 0;        
@@ -68,20 +76,30 @@ int main()
             brush = 2;
         }
 
+        sf::Vector2i mouse = sf::Mouse::getPosition(window);
+
+        mouse = manager->ScreenToCell(mouse);
+
+        mousePos.setString("MOUSE POS: " + std::to_string(mouse.x) + ", " + std::to_string(mouse.y));
+        mousePos.setPosition(CAMERA::view.getCenter() - sf::Vector2f(CAMERA::GetScreenWidth()/2, CAMERA::GetScreenHeight()/2 + 50));
+        window.draw(mousePos);
+
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {
             static int iter = 0;
 
-            sf::Vector2i mouse = sf::Mouse::getPosition(window);
+            //sf::Vector2i mouse = sf::Mouse::getPosition(window);
 
-            mouse = manager->ScreenToCell(mouse);
+            //mouse = manager->ScreenToCell(mouse);
 
             int brushSize = 20;
 
             switch(brush)
             {
                 case 0:
-                    manager->Set(mouse.x, mouse.y, Cell(SOLID));
+                    for(int x = -brushSize; x <= brushSize; x++)
+                        for(int y = -brushSize; y <= brushSize; y++)
+                            manager->Set(mouse.x + x, mouse.y + y, Cell(SOLID));
                     break;
                 case 1:
                     for(int x = -brushSize; x <= brushSize; x++)
@@ -89,18 +107,14 @@ int main()
                             manager->Set(mouse.x + x, mouse.y + y, Cell(SAND));
                     break;
                 case 2:
-                    manager->Set(mouse.x, mouse.y, Cell(AIR));
+                    for(int x = -brushSize; x <= brushSize; x++)
+                        for(int y = -brushSize; y <= brushSize; y++)
+                            manager->Set(mouse.x + x, mouse.y + y, Cell(AIR));
                     break;
             }
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------
-
-        window.clear(); //clear window for rendering
-
-        manager->FullRun(&window, timer); //update the CaveSand engine and draw it
-
-        player.Draw(&window); //draw player character to screen
 
         //FPS COUNTER------------------------------------------------------------------------------------------------------------------------------
         fps.setPosition(CAMERA::view.getCenter() - sf::Vector2f(CAMERA::GetScreenWidth()/2, CAMERA::GetScreenHeight()/2));
