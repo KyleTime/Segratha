@@ -64,15 +64,22 @@ void ChunkRend::ChunkDraw(sf::RenderWindow* target)
         return;
     }*/
 
+    //std::cout << "INPUTS: [CHUNK]= " << bound->xChunk << ", " << bound->yChunk << " [POSITION]= " << position.x << ", " << position.y << std::endl;
+
     int startX = (position.x) * REND_SIZE;
     int startY = (position.y) * REND_SIZE;
+
+    //std::cout << "start1: " << startX << ", " << startY << std::endl;
 
     startX -= bound->xChunk * CHUNK_SIZE;
     startY -= bound->yChunk * CHUNK_SIZE;
 
+    //std::cout << "start2: " << startX << ", " << startY << std::endl;
+
     startX %= CHUNK_SIZE;
     startY %= CHUNK_SIZE;
 
+    //std::cout << "start3: " << startX << ", " << startY << std::endl;
     //if(startX < 0 || startY < 0)
     //{
         //std::cout << "FUCK startX: " << startX << ", " << startY << " chunk: " << bound->xChunk << ", " << bound->yChunk << std::endl;

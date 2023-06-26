@@ -92,7 +92,15 @@ void CaveSand::RenderGroup(sf::RenderWindow* target)
     {
         for(int y = minPos.y; y <= maxPos.y; y++)
         {
-            Chunk* c = GetChunkCell(x*REND_SIZE, y*REND_SIZE);
+            int xChunk = x*REND_SIZE / CHUNK_SIZE;
+            int yChunk = y*REND_SIZE / CHUNK_SIZE;
+
+            if(x*REND_SIZE < 0 && x*REND_SIZE % CHUNK_SIZE != 0)
+                xChunk -= 1;
+            if(y*REND_SIZE < 0 && y*REND_SIZE % CHUNK_SIZE != 0)
+                yChunk -= 1;
+
+            Chunk* c = GetChunk(xChunk, yChunk);
 
             if(c == nullptr)
                 continue;
@@ -209,13 +217,13 @@ void CaveSand::Autoload(sf::RenderWindow* target)
 
     playerCell = cellPos;
 
-    sf::Vector2i chunkPos = cellPos / CHUNK_SIZE;
+    sf::Vector2i chunkPos = CellToChunkPos(cellPos.x, cellPos.y);
 
     //LOAD NEW CHUNKS----------------------------------------
     sf::Vector2i relPos = sf::Vector2i();
 
     //left side
-    if(cellPos.x % CHUNK_SIZE < CHUNK_SIZE / 2)
+    if(abs(cellPos.x) % CHUNK_SIZE < CHUNK_SIZE / 2)
     {
         relPos.x = -1;
     }
@@ -226,7 +234,7 @@ void CaveSand::Autoload(sf::RenderWindow* target)
     }
 
     //top side
-    if(cellPos.y % CHUNK_SIZE < CHUNK_SIZE / 2)
+    if(abs(cellPos.y) % CHUNK_SIZE < CHUNK_SIZE / 2)
     {
         relPos.y = -1;
     }
@@ -235,6 +243,17 @@ void CaveSand::Autoload(sf::RenderWindow* target)
     {
         relPos.y = 1;
     }
+
+    if(cellPos.x < 0)
+        relPos.x *= -1;
+    if(cellPos.y < 0)
+        relPos.y *= -1;
+
+    /*static int j = 0;
+    std::cout << "iteration: " << j << "-------------------------------" << std::endl;
+    std::cout << chunkPos.x << ", " << chunkPos.y << std::endl;
+    std::cout << "cellPos: " << cellPos.x << ", " << cellPos.y << std::endl;
+    j++;*/
 
     //load chunk I'm in
     LoadAt(chunkPos.x, chunkPos.y);
@@ -251,7 +270,7 @@ void CaveSand::Autoload(sf::RenderWindow* target)
     for(auto i = chunks.begin(); i != chunks.end() && chunks.size() > 12; i++)
     {
         Chunk* c = *i;
-        if(abs(c->xChunk - chunkPos.x) > 1 || abs(c->yChunk - chunkPos.y) > 1)
+        if(abs(c->xChunk - chunkPos.x) >= 2 || abs(c->yChunk - chunkPos.y) >= 2)
         {
             chunks.erase(i);
             //i--;
@@ -261,6 +280,8 @@ void CaveSand::Autoload(sf::RenderWindow* target)
 
 bool CaveSand::LoadAt(int x, int y)
 {
+    //std::cout << "Loaded at: " << x << ", " << y << std::endl;
+
     //check if the chunk already exists
     if(GetChunk(x, y))
     {
@@ -290,6 +311,11 @@ bool CaveSand::UnLoadAt(int x, int y)
     return false;
 }
 
+Chunk* CaveSand::GetChunk(sf::Vector2i pos)
+{
+    return GetChunk(pos.x, pos.y);
+}
+
 Chunk* CaveSand::GetChunk(int xChunk, int yChunk)
 {
     for(int i = 0; i < chunks.size(); i++)
@@ -308,15 +334,7 @@ Chunk* CaveSand::GetChunkCell(int xCell, int yCell)
     //if(xCell < 0 || yCell < 0)
     //   return nullptr;
 
-    int xChunk = xCell / CHUNK_SIZE;
-    int yChunk = yCell / CHUNK_SIZE;
-
-    if(xCell < 0 && xCell % CHUNK_SIZE != 0)
-        xChunk -= 1;
-    if(yCell < 0 && yCell % CHUNK_SIZE != 0)
-        yChunk -= 1;
-
-    Chunk* chunk = GetChunk(xChunk, yChunk);
+    Chunk* chunk = GetChunk(CellToChunkPos(xCell, yCell));
 
     return chunk;
 }
@@ -340,13 +358,17 @@ sf::Vector2i CaveSand::ScreenToCell(sf::Vector2i pos)
 {
     sf::Vector2i fin = pos;
 
-    //center pos
-    fin.x += CAMERA::view.getCenter().x / CAMERA::zoom;
-    fin.y += CAMERA::view.getCenter().y / CAMERA::zoom;
-
     //offset to center
     fin.x -= CAMERA::ASPECT_RATIO * CAMERA::SCREEN_SIZE * 1/2;
     fin.y -= CAMERA::SCREEN_SIZE * 1/2;
+
+    //convert to game size
+    fin.x *= (float)CAMERA::GAME_SIZE / CAMERA::SCREEN_SIZE;
+    fin.y *= (float)CAMERA::GAME_SIZE / CAMERA::SCREEN_SIZE;
+
+    //center pos
+    fin.x += CAMERA::view.getCenter().x / CAMERA::zoom;
+    fin.y += CAMERA::view.getCenter().y / CAMERA::zoom;
 
     //round to cell
     fin.x /= CELL_SIZE / CAMERA::zoom;
@@ -365,9 +387,21 @@ sf::Vector2i CaveSand::WorldToCell(sf::Vector2f world)
     return (sf::Vector2i)fin;
 }
 
+sf::Vector2i CaveSand::CellToChunkPos(sf::Vector2i cellPos)
+{
+    return CellToChunkPos(cellPos.x, cellPos.y);
+}
+
 sf::Vector2i CaveSand::CellToChunkPos(int x, int y)
 {
-    return sf::Vector2i(x / CHUNK_SIZE, y / CHUNK_SIZE);
+    int xChunk = x / CHUNK_SIZE;
+    int yChunk = y / CHUNK_SIZE;
+
+    if(x < 0)
+        xChunk -= 1;
+    if(y < 0)
+        yChunk -= 1;
+    return sf::Vector2i(xChunk, yChunk);
 }
 
 bool CaveSand::SameChunk(sf::Vector2i c1, sf::Vector2i c2)

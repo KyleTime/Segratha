@@ -16,7 +16,7 @@ namespace Segratha
         private:
             std::vector<Chunk*> chunks; //Chunks will live on the heap lol
             
-            const static int numRend = 144; //determines how many renderers we got (144 is optimal)
+            const static int numRend = 149; //determines how many renderers we got (144 is optimal)
             ChunkRend rend[numRend]; //renderers will live on the heap as well
 
             static CaveSand* inst; //static instance of this class
@@ -72,6 +72,9 @@ namespace Segratha
             /// @param position position to focus on, generally the player.
             void Autoload(sf::RenderWindow* target);
 
+            /// @brief given coordinates on the chunk grid, grab that chunk and return a pointer
+            Chunk* GetChunk(sf::Vector2i chunkPos);
+
             ///@brief given coordinates on the chunk grid, grab that chunk and return a pointer
             Chunk* GetChunk(int xChunk, int yChunk);
 
@@ -92,6 +95,9 @@ namespace Segratha
 
             //given a world position, output a cell position
             sf::Vector2i WorldToCell(sf::Vector2f world);
+
+            //takes in a Cell position and returns a Chunk position
+            sf::Vector2i CellToChunkPos(sf::Vector2i cellPos);
 
             //takes in a Cell position and returns a Chunk position
             sf::Vector2i CellToChunkPos(int x, int y);

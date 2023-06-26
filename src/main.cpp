@@ -16,7 +16,7 @@ int main()
 
     CAMERA::view = sf::View();
     CAMERA::ChangeCenter(sf::Vector2f(CHUNK_SIZE * CELL_SIZE * 2 + 32 * CELL_SIZE, CHUNK_SIZE * CELL_SIZE * 1.5f));
-    CAMERA::ChangeSize(CAMERA::ASPECT_RATIO * CAMERA::zoom * CAMERA::SCREEN_SIZE, CAMERA::zoom * CAMERA::SCREEN_SIZE);
+    CAMERA::ChangeSize(CAMERA::ASPECT_RATIO * CAMERA::zoom * CAMERA::GAME_SIZE, CAMERA::zoom * CAMERA::GAME_SIZE);
 
     window.setView(CAMERA::view);
 
