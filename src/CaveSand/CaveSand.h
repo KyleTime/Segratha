@@ -105,6 +105,12 @@ namespace Segratha
             //given two Cell positions, return whether they're in the same chunk
             bool SameChunk(sf::Vector2i c1, sf::Vector2i c2);
 
+            //given a Cell position, give where it would be in the current chunk
+            sf::Vector2i RelCellPos(sf::Vector2i c);
+
+            //given a Cell position, give where it would be in the current chunk
+            sf::Vector2i RelCellPos(int x, int y);
+
             //Cell MOVE FUNCTIONS
             
             //Returns true if the destination Cell is air and the move was successful;

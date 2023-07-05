@@ -409,6 +409,16 @@ bool CaveSand::SameChunk(sf::Vector2i c1, sf::Vector2i c2)
     return CellToChunkPos(c1.x, c1.y) == CellToChunkPos(c2.x, c2.y);
 }
 
+sf::Vector2i CaveSand::RelCellPos(sf::Vector2i c)
+{
+    return sf::Vector2i((c.x + CHUNK_SIZE) % CHUNK_SIZE, (c.y + CHUNK_SIZE) % CHUNK_SIZE);
+}
+
+sf::Vector2i CaveSand::RelCellPos(int x, int y)
+{
+    return RelCellPos(sf::Vector2i(x, y));
+}
+
 void CaveSand::FullTouch(int x, int y)
 {
     Chunk* c = GetChunk(x, y);
@@ -426,15 +436,17 @@ bool CaveSand::Move(int fromX, int fromY, int toX, int toY)
 
     //grab chunk of "to"
     Chunk* c = GetChunkCell(toX, toY);
+    sf::Vector2i to = RelCellPos(toX, toY);
+    sf::Vector2i fromP = RelCellPos(fromX, fromY);
 
-    if(c != nullptr && c->cells[toX % CHUNK_SIZE][toY % CHUNK_SIZE].isAir()) //if air, then move
+    if(c != nullptr && c->cells[to.x][to.y].isAir()) //if air, then move
     {
         //decide whether we need to grab another chunk
         if(!same)
         {
             Chunk* from = GetChunkCell(fromX, fromY);
-            Set(toX % CHUNK_SIZE, toY % CHUNK_SIZE, from->cells[fromX % CHUNK_SIZE][fromY % CHUNK_SIZE], c);
-            Set(fromX % CHUNK_SIZE, fromY % CHUNK_SIZE, Cell(AIR), from);
+            Set(to.x, to.y, from->cells[fromP.x][fromP.y], c);
+            Set(fromP.x, fromP.y, Cell(AIR), from);
             
             //from->Touch(fromX % CHUNK_SIZE, fromY % CHUNK_SIZE);
         }
@@ -444,8 +456,8 @@ bool CaveSand::Move(int fromX, int fromY, int toX, int toY)
             //std::swap(c->cells[fromX % CHUNK_SIZE][fromY % CHUNK_SIZE], c->cells[toX % CHUNK_SIZE][toY % CHUNK_SIZE]);
             //c->Touch(fromX % CHUNK_SIZE, fromY % CHUNK_SIZE);
 
-            Set(toX % CHUNK_SIZE, toY % CHUNK_SIZE, c->cells[fromX % CHUNK_SIZE][fromY % CHUNK_SIZE], c);
-            Set(fromX % CHUNK_SIZE, fromY % CHUNK_SIZE, Cell(AIR), c);
+            Set(to.x, to.y, c->cells[fromP.x][fromP.y], c);
+            Set(fromP.x, fromP.y, Cell(AIR), c);
         }
 
         //touch at "to" position (it all we care about)
@@ -453,8 +465,8 @@ bool CaveSand::Move(int fromX, int fromY, int toX, int toY)
     }
     else //if not air, stop
     {
-        if(c == nullptr)
-            std::cout << "got null chunk at cell position: " << toX << ", " << toY << std::endl;
+        //if(c == nullptr)
+            //std::cout << "got null chunk at cell position: " << toX << ", " << toY << std::endl;
 
         return false;
     }
@@ -465,8 +477,9 @@ bool CaveSand::Move(int fromX, int fromY, int toX, int toY)
 void CaveSand::Set(int x, int y, Cell p)
 {
     Chunk* chunk = GetChunkCell(x, y);
+    sf::Vector2i cc = RelCellPos(x, y);
 
-    Set((x % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE, (y % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE, p, chunk);
+    Set(cc.x, cc.y, p, chunk);
 }
 
 void CaveSand::Set(int x, int y, Cell p, Chunk* chunk)
