@@ -23,6 +23,9 @@ namespace Segratha
 
             //info functions
             bool isAir();
+            bool isSolid();
+            bool isLiquid();
+            bool isGas();
 
         private:
             //update functions for different types

@@ -35,12 +35,11 @@ int main()
     
     sf::Text mousePos("MOUSE: ", font, 50);
 
-    float timer = 0.005f;
+    float timer = 0.01f;
     while (window.isOpen())
     {
         KyleTime::UpdateDelta(); //Update Deltatime calculation
 
-        player.Update(); //update player
 
         window.setView(CAMERA::view); //update camera position
 
@@ -58,6 +57,7 @@ int main()
 
         manager->FullRun(&window, timer); //update the CaveSand engine and draw it
 
+        player.Update(manager); //update player
         player.Draw(&window); //draw player character to screen
 
         //BRUSH CODE -----------------------------------------------------------------------------------

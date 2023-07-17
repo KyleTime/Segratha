@@ -342,10 +342,10 @@ Chunk* CaveSand::GetChunkCell(int xCell, int yCell)
 Cell* CaveSand::GetCellAt(int x, int y)
 {
     Chunk* chunk = GetChunkCell(x, y);
-
+    sf::Vector2i rel = RelCellPos(x, y);
     if(chunk != nullptr)
     {
-        return &chunk->cells[(x + CHUNK_SIZE) % CHUNK_SIZE][(y + CHUNK_SIZE) % CHUNK_SIZE];
+        return &chunk->cells[rel.x][rel.y];
     }
     else
     {
@@ -411,7 +411,7 @@ bool CaveSand::SameChunk(sf::Vector2i c1, sf::Vector2i c2)
 
 sf::Vector2i CaveSand::RelCellPos(sf::Vector2i c)
 {
-    return sf::Vector2i((c.x + CHUNK_SIZE) % CHUNK_SIZE, (c.y + CHUNK_SIZE) % CHUNK_SIZE);
+    return sf::Vector2i((c.x % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE, (c.y % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE);
 }
 
 sf::Vector2i CaveSand::RelCellPos(int x, int y)

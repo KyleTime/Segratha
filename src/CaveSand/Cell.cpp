@@ -68,3 +68,36 @@ bool Cell::isAir()
             return false;
     }
 }
+
+bool Cell::isSolid()
+{
+    switch(type)
+    {
+        case SOLID || SAND:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool Cell::isLiquid()
+{
+    switch(type)
+    {
+        case WATER:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool Cell::isGas()
+{
+    switch(type)
+    {
+        case AIR:
+            return true;
+        default:
+            return false;
+    }
+}

@@ -2,18 +2,17 @@
 #define PLAYERCORE_H
 
 #include <SFML/Graphics.hpp>
+#include "GameObject.h"
 
 namespace Segratha
 {
-    class PlayerCore
+    class PlayerCore : GameObject
     {
         public:
-            sf::Vector2f position;
-
             PlayerCore();
             ~PlayerCore();
 
-            void Update();
+            void Update(CaveSand* sand);
             void Draw(sf::RenderWindow* target);
     };
 }
