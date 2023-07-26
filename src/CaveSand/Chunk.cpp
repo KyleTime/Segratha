@@ -52,7 +52,7 @@ void Chunk::ChunkUpdate(unsigned char cycle)
     for(int y = curR1.y; y >= curR2.y; --y)
         for(int x = curR1.x; x <= curR2.x; ++x)
         {
-            cells[x][y].Update(x + xChunk * CHUNK_SIZE, y + yChunk * CHUNK_SIZE, cycle);
+            cells[x][y].Update(x, y, cycle);
         }
     
     updateCycles -= 1;

@@ -4,15 +4,12 @@
 
 using namespace Segratha;
 
-void Cell::SandUpdate(int xW, int yW)
+void Cell::SandUpdate(int x, int y)
 {
     static CaveSand* inst = CaveSand::GetInstance();
 
-    if( !inst->Move(xW, yW, xW, yW + 1))
-    {
-        if(!inst->Move(xW, yW, xW + 1, yW + 1))
-        {
-            if(!inst->Move(xW, yW, xW - 1, yW + 1)) {}
-        }
-    }
+    //Chunk* c = inst->GetChunkCell(xW, yW);
+
+    //int ydist = 1; //the distance we're gonna move (on the y)
+    
 }

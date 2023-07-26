@@ -36,13 +36,13 @@ Cell::~Cell()
 
 }
 
-void Cell::Update(int xW, int yW, unsigned char cycle)
+void Cell::Update(int x, int y, unsigned char cycle)
 {
     static CaveSand* inst = CaveSand::GetInstance();
 
     if(this->cycle == cycle)
     {
-        inst->Touch(xW, yW);
+        inst->Touch(x, y);
         return;
     }
 
@@ -53,7 +53,7 @@ void Cell::Update(int xW, int yW, unsigned char cycle)
         case AIR:
             break;
         case SAND:
-            SandUpdate(xW, yW);
+            SandUpdate(x, y);
             break;
     }
 }

@@ -336,6 +336,9 @@ Chunk* CaveSand::GetChunkCell(int xCell, int yCell)
 
     Chunk* chunk = GetChunk(CellToChunkPos(xCell, yCell));
 
+    if(!chunk)
+        std::cout << "failed at GetChunk() with input " << xCell << ", " << yCell << " and with a CellToChunkPos of " << CellToChunkPos(xCell, yCell).x << ", " << CellToChunkPos(xCell, yCell).y << std::endl;
+
     return chunk;
 }
 
@@ -400,7 +403,7 @@ sf::Vector2i CaveSand::CellToChunkPos(int x, int y)
     if(x < 0)
         xChunk -= 1;
     if(y < 0)
-        yChunk -= 1;
+       yChunk -= 1;
     return sf::Vector2i(xChunk, yChunk);
 }
 
@@ -411,7 +414,9 @@ bool CaveSand::SameChunk(sf::Vector2i c1, sf::Vector2i c2)
 
 sf::Vector2i CaveSand::RelCellPos(sf::Vector2i c)
 {
-    return sf::Vector2i((c.x % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE, (c.y % CHUNK_SIZE + CHUNK_SIZE) % CHUNK_SIZE);
+    sf::Vector2i rel(c.x % CHUNK_SIZE, c.y % CHUNK_SIZE);
+
+    return rel;
 }
 
 sf::Vector2i CaveSand::RelCellPos(int x, int y)
@@ -437,6 +442,7 @@ bool CaveSand::Move(int fromX, int fromY, int toX, int toY)
     //grab chunk of "to"
     Chunk* c = GetChunkCell(toX, toY);
     sf::Vector2i to = RelCellPos(toX, toY);
+
     sf::Vector2i fromP = RelCellPos(fromX, fromY);
 
     if(c != nullptr && c->cells[to.x][to.y].isAir()) //if air, then move
@@ -445,6 +451,26 @@ bool CaveSand::Move(int fromX, int fromY, int toX, int toY)
         if(!same)
         {
             Chunk* from = GetChunkCell(fromX, fromY);
+
+            if(!from)
+            {
+                return false;
+
+                std::cout << "---------------------------------------------------------------------------------------------------------------" << std::endl;
+                std::cout << "putting (" << fromX << ", " << fromY << ") into RelCel, got (";
+                std::cout << fromP.x << ", " << fromP.y << ") " << std::endl;
+                std::cout << "CelltoChunk is " << CellToChunkPos(fromX, fromY).x << ", " << CellToChunkPos(fromX, fromY).y << std::endl;
+
+
+                std::cout << "LISTING CHUNKS>>>>>>>>>>>>>>>>>>>>>>>>" << std::endl;
+                for(int i = 0; i < chunks.size(); i++)
+                {
+                    std::cout << "chunk: " << chunks[i]->xChunk << ", " << chunks[i]->yChunk << std::endl;
+                }
+
+                std::cout << "---------------------------------------------------------------------------------------------------------------" << std::endl;
+            }
+
             Set(to.x, to.y, from->cells[fromP.x][fromP.y], c);
             Set(fromP.x, fromP.y, Cell(AIR), from);
             

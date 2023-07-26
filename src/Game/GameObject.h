@@ -1,7 +1,7 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include "CaveSand/CaveSand.h"
+#include "../CaveSand/CaveSand.h"
 
 namespace Segratha
 {
@@ -20,7 +20,12 @@ namespace Segratha
 
             /// @brief returns true if any part of the hitbox defined by cellScale is colliding a cell
             /// @param cave the CaveSand engine to query
-            virtual bool CellCollide(CaveSand* cave);
+            bool CellCollide(CaveSand* cave);
+
+            /// @brief returns true if any part of the hitbox defined by cellScale is colliding a cell
+            /// @param cave the CaveSand engine to query
+            /// @param point an output to get the point of collision in Cell coordinates
+            bool CellCollide(CaveSand* cave, sf::Vector2i& point, bool feet);
 
             /// @brief A big function that combines all the necessary pieces to move the object by velocity and collide with things along the way
             /// @param cave CaveSand engine to query

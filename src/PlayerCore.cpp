@@ -2,12 +2,10 @@
 #include "CaveSand/KyleTime.hpp"
 #include "CaveSand/Camera.h"
 
-#include <iostream>
-
 using namespace Segratha;
 
 PlayerCore::PlayerCore()
-    : GameObject()
+    : PhysObject()
 {
     cellScale = sf::Vector2i(3, 3);
 }
@@ -16,13 +14,13 @@ PlayerCore::~PlayerCore() {}
 
 void PlayerCore::Update(CaveSand* sand)
 {
-    GameObject::Update(sand);
+    //PhysObject::Update(sand);
 
     float speed = 1000;
 
     float mod = 1;
 
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::RShift))
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
         mod = 5;
     else
         mod = 1;
@@ -50,7 +48,7 @@ void PlayerCore::Update(CaveSand* sand)
 void PlayerCore::Draw(sf::RenderWindow* target)
 {
     sf::RectangleShape shape(sf::Vector2f(20, 20));
-    shape.setPosition(position.x, position.y);
+    shape.setPosition(position.x - 10, position.y - 10);
 
     float xSize = cellScale.x * CELL_SIZE * 2;
     float ySize = cellScale.y * CELL_SIZE * 2;

@@ -2,11 +2,11 @@
 #define PLAYERCORE_H
 
 #include <SFML/Graphics.hpp>
-#include "GameObject.h"
+#include "Game/PhysObject.h"
 
 namespace Segratha
 {
-    class PlayerCore : GameObject
+    class PlayerCore : PhysObject
     {
         public:
             PlayerCore();

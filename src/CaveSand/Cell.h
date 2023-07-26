@@ -19,7 +19,7 @@ namespace Segratha
             Cell();
             Cell(cell_type type);
             ~Cell();
-            void Update(int xW, int yW, unsigned char cycle);
+            void Update(int x, int y, unsigned char cycle);
 
             //info functions
             bool isAir();
@@ -28,10 +28,15 @@ namespace Segratha
             bool isGas();
 
         private:
+            //general movement functions
+
+            //move by (xM, yM) in the current chunk given rel coords (x, y)
+            void Move(int x, int y, int xM, int yM);
+            
             //update functions for different types
 
             //Updates a pixel as if it were sand
-            void SandUpdate(int xW, int yW);
+            void SandUpdate(int x, int y);
     };
 }
 
