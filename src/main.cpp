@@ -9,6 +9,12 @@ using namespace Segratha;
 
 int main()
 {
+    // for(int i = 0; i > -CHUNK_SIZE * 2; i--)
+    // {
+    //     std::cout << "i: " << i << " i \% CHUNK_SIZE: " << (i % CHUNK_SIZE) + CHUNK_SIZE - 1 << std::endl;
+    // }
+
+
     //set zoom
     CAMERA::zoom = 3.f;
 

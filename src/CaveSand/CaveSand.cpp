@@ -336,9 +336,6 @@ Chunk* CaveSand::GetChunkCell(int xCell, int yCell)
 
     Chunk* chunk = GetChunk(CellToChunkPos(xCell, yCell));
 
-    if(!chunk)
-        std::cout << "failed at GetChunk() with input " << xCell << ", " << yCell << " and with a CellToChunkPos of " << CellToChunkPos(xCell, yCell).x << ", " << CellToChunkPos(xCell, yCell).y << std::endl;
-
     return chunk;
 }
 
@@ -414,9 +411,23 @@ bool CaveSand::SameChunk(sf::Vector2i c1, sf::Vector2i c2)
 
 sf::Vector2i CaveSand::RelCellPos(sf::Vector2i c)
 {
-    sf::Vector2i rel(c.x % CHUNK_SIZE, c.y % CHUNK_SIZE);
+    // int x = c.x;
+    // int y = c.y;
 
-    return rel;
+    // if(x < 0)
+    //     x = (c.x % CHUNK_SIZE) + CHUNK_SIZE - 1;
+    // else
+    //     x %= CHUNK_SIZE;
+    
+    // if(y < 0)
+    //     y = (c.y % CHUNK_SIZE) + CHUNK_SIZE - 1;
+    // else
+    //     y %= CHUNK_SIZE;
+
+
+    // return sf::Vector2i(x, y);
+
+    return sf::Vector2i(((c.x % CHUNK_SIZE) + CHUNK_SIZE - 1) % CHUNK_SIZE, ((c.y % CHUNK_SIZE) + CHUNK_SIZE - 1) % CHUNK_SIZE);
 }
 
 sf::Vector2i CaveSand::RelCellPos(int x, int y)
@@ -510,6 +521,8 @@ void CaveSand::Set(int x, int y, Cell p)
 
 void CaveSand::Set(int x, int y, Cell p, Chunk* chunk)
 {
+    //std::cout << "POSITION OF SET: " << x << ", " << y << std::endl;
+
     if(chunk == nullptr)
         return;
 

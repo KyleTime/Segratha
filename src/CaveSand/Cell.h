@@ -7,6 +7,8 @@
 
 namespace Segratha
 {
+    class Chunk;
+
     enum cell_type : unsigned char { AIR, SOLID, SAND, WATER };
 
     class Cell
@@ -19,7 +21,7 @@ namespace Segratha
             Cell();
             Cell(cell_type type);
             ~Cell();
-            void Update(int x, int y, unsigned char cycle);
+            void Update(int x, int y, unsigned char cycle, Chunk* c);
 
             //info functions
             bool isAir();
@@ -31,12 +33,14 @@ namespace Segratha
             //general movement functions
 
             //move by (xM, yM) in the current chunk given rel coords (x, y)
-            void Move(int x, int y, int xM, int yM);
+            //WARNING: Assumes that you're not moving the cell by more than 1 chunk in distance. You shouldn't be doing that anyway, we'd have weird multithreading issues.
+            //also, there's a funny optional bool on the end, setting it to true will have the move function ignore whether the destination is solid
+            bool Move(int x, int y, int xm, int ym, Chunk* c, bool replace = false);
             
             //update functions for different types
 
             //Updates a pixel as if it were sand
-            void SandUpdate(int x, int y);
+            void SandUpdate(int x, int y, Chunk* c);
     };
 }
 
