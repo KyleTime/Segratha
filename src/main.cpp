@@ -27,8 +27,9 @@ int main()
     window.setView(CAMERA::view);
 
     CaveSand* manager = CaveSand::GetInstance();
-    //manager->LoadAt(-1, 0);
-    //manager->LoadAt(0, 0);
+    manager->LoadAt(-1, 0);
+    manager->LoadAt(0, 0);
+    manager->Set(0, 50, Cell(SOLID));
 
     KyleTime::GetInstance();
 
@@ -86,6 +87,13 @@ int main()
 
         mouse = manager->ScreenToCell(mouse);
 
+        sf::RectangleShape mouseSelect = sf::RectangleShape(sf::Vector2f(CELL_SIZE, CELL_SIZE));
+        mouseSelect.setPosition(sf::Vector2f(mouse.x, mouse.y)*CELL_SIZE);
+        mouseSelect.setFillColor(sf::Color::Transparent);
+        mouseSelect.setOutlineColor(sf::Color::Red);
+        mouseSelect.setOutlineThickness(5);
+        window.draw(mouseSelect);
+
         mousePos.setString("MOUSE POS: " + std::to_string(mouse.x) + ", " + std::to_string(mouse.y));
         mousePos.setPosition(CAMERA::view.getCenter() - sf::Vector2f(CAMERA::GetScreenWidth()/2, CAMERA::GetScreenHeight()/2 + 50));
         window.draw(mousePos);
@@ -98,7 +106,7 @@ int main()
 
             //mouse = manager->ScreenToCell(mouse);
 
-            int brushSize = 20;
+            int brushSize = 100;
 
             switch(brush)
             {

@@ -334,6 +334,9 @@ Chunk* CaveSand::GetChunkCell(int xCell, int yCell)
     //if(xCell < 0 || yCell < 0)
     //   return nullptr;
 
+    //xCell -= 1;
+    //yCell -= 1;
+
     Chunk* chunk = GetChunk(CellToChunkPos(xCell, yCell));
 
     return chunk;
@@ -366,6 +369,7 @@ sf::Vector2i CaveSand::ScreenToCell(sf::Vector2i pos)
     fin.x *= (float)CAMERA::GAME_SIZE / CAMERA::SCREEN_SIZE;
     fin.y *= (float)CAMERA::GAME_SIZE / CAMERA::SCREEN_SIZE;
 
+
     //center pos
     fin.x += CAMERA::view.getCenter().x / CAMERA::zoom;
     fin.y += CAMERA::view.getCenter().y / CAMERA::zoom;
@@ -394,13 +398,19 @@ sf::Vector2i CaveSand::CellToChunkPos(sf::Vector2i cellPos)
 
 sf::Vector2i CaveSand::CellToChunkPos(int x, int y)
 {
+    if(x < -511)
+        x++;
+    if(y < -511)
+        y++;
+
     int xChunk = x / CHUNK_SIZE;
     int yChunk = y / CHUNK_SIZE;
 
     if(x < 0)
         xChunk -= 1;
     if(y < 0)
-       yChunk -= 1;
+        yChunk -= 1;
+    
     return sf::Vector2i(xChunk, yChunk);
 }
 
@@ -411,23 +421,22 @@ bool CaveSand::SameChunk(sf::Vector2i c1, sf::Vector2i c2)
 
 sf::Vector2i CaveSand::RelCellPos(sf::Vector2i c)
 {
-    // int x = c.x;
-    // int y = c.y;
-
-    // if(x < 0)
-    //     x = (c.x % CHUNK_SIZE) + CHUNK_SIZE - 1;
-    // else
-    //     x %= CHUNK_SIZE;
+    // if(c.x < 0)
+    //     c.x += 1;
     
-    // if(y < 0)
-    //     y = (c.y % CHUNK_SIZE) + CHUNK_SIZE - 1;
-    // else
-    //     y %= CHUNK_SIZE;
+    //if(c.y < 0)
+    //    c.y += 1;
 
+    int x = ((c.x % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
+    int y = ((c.y % CHUNK_SIZE) + CHUNK_SIZE) % CHUNK_SIZE;
 
-    // return sf::Vector2i(x, y);
+    //if(c.x == 0)
+    //{
+    //    std::cout << "X at 0 IS " << x << std::endl;
+    //    x = 0;
+    //} 
 
-    return sf::Vector2i(((c.x % CHUNK_SIZE) + CHUNK_SIZE - 1) % CHUNK_SIZE, ((c.y % CHUNK_SIZE) + CHUNK_SIZE - 1) % CHUNK_SIZE);
+    return sf::Vector2i(x, y);
 }
 
 sf::Vector2i CaveSand::RelCellPos(int x, int y)

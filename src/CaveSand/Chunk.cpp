@@ -50,10 +50,25 @@ void Chunk::ChunkUpdate(unsigned char cycle)
     rect2 = sf::Vector2i(-1, -1);
 
     for(int y = curR1.y; y >= curR2.y; --y)
+    {
+        //there are two for loops in here so that we're updating in either direction in the chunk
+        //this makes certain things a bit more consistent
+
         for(int x = curR1.x; x <= curR2.x; ++x)
         {
             cells[x][y].Update(x, y, cycle, this);
         }
+
+        y--;
+
+        if(y < curR2.y)
+            break;
+
+        for(int x = curR2.x; x >= curR1.x; x--)
+        {
+            cells[x][y].Update(x, y, cycle, this);
+        }
+    }
     
     updateCycles -= 1;
 }

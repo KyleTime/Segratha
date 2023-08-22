@@ -93,6 +93,16 @@ void ChunkRend::ChunkDraw(sf::RenderWindow* target)
 
             sf::Color cellColor = (bound->cells[(x + startX)][(y + startY)]).color;
 
+            if(cellColor != sf::Color::Transparent)
+                if(x + startX == CHUNK_SIZE - 1)
+                {
+                    cellColor = sf::Color::Red;
+                }
+                else if(x + startX == 0)
+                {
+                    cellColor = sf::Color::Green;
+                }
+
             vert[i * 4 + 0].color = cellColor;
             vert[i * 4 + 1].color = cellColor;
             vert[i * 4 + 2].color = cellColor;
@@ -112,9 +122,10 @@ void ChunkRend::ChunkDraw(sf::RenderWindow* target)
 
     target->draw(vert, transform);
 
+    /*
     sf::RectangleShape rect(sf::Vector2f(REND_SIZE * CELL_SIZE, REND_SIZE * CELL_SIZE));
     rect.setPosition(sf::Vector2f(CELL_SIZE * REND_SIZE * position.x, CELL_SIZE * REND_SIZE * position.y));
-    rect.setOutlineThickness(10);
+    rect.setOutlineThickness(10);*/
     
     /*
     if(abs(position.x % DIVISOR) == DIVISOR - 1)
@@ -129,6 +140,7 @@ void ChunkRend::ChunkDraw(sf::RenderWindow* target)
         rect.setOutlineColor(sf::Color::Green);
     */
 
+   /*
     int color = abs(bound->xChunk) % 3;
 
     switch(color)
@@ -145,7 +157,7 @@ void ChunkRend::ChunkDraw(sf::RenderWindow* target)
     }
 
     rect.setFillColor(sf::Color::Transparent);
-    target->draw(rect);
+    target->draw(rect);*/
 
 
     /*
