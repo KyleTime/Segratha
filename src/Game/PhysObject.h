@@ -8,7 +8,7 @@ namespace Segratha
     class PhysObject : public GameObject
     {
         public:
-            const float GRAVITY_SCALE = -100;
+            const float GRAVITY_SCALE = -1000;
 
             sf::Vector2f velocity;
             bool grounded;
@@ -16,6 +16,11 @@ namespace Segratha
 
             PhysObject();
             ~PhysObject();
+
+            /// @brief Checks each direction based on velocity and applies proper collisions (based on functions in GameObject) 
+            /// @param sand the CaveSand engine to query
+            /// @return whether we collided with anything
+            bool FullCollisionCheck(CaveSand* sand);
 
             void Update(CaveSand* sand);
     };

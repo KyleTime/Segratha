@@ -29,6 +29,9 @@ int main()
     CaveSand* manager = CaveSand::GetInstance();
     manager->LoadAt(-1, 0);
     manager->LoadAt(0, 0);
+    manager->LoadAt(-1, 1);
+    manager->LoadAt(1, 0);
+    
     manager->Set(0, 50, Cell(SOLID));
 
     KyleTime::GetInstance();
@@ -46,7 +49,6 @@ int main()
     while (window.isOpen())
     {
         KyleTime::UpdateDelta(); //Update Deltatime calculation
-
 
         window.setView(CAMERA::view); //update camera position
 
@@ -87,6 +89,7 @@ int main()
 
         mouse = manager->ScreenToCell(mouse);
 
+        //show what cell the mouse is hovering over
         sf::RectangleShape mouseSelect = sf::RectangleShape(sf::Vector2f(CELL_SIZE, CELL_SIZE));
         mouseSelect.setPosition(sf::Vector2f(mouse.x, mouse.y)*CELL_SIZE);
         mouseSelect.setFillColor(sf::Color::Transparent);
@@ -106,7 +109,7 @@ int main()
 
             //mouse = manager->ScreenToCell(mouse);
 
-            int brushSize = 100;
+            int brushSize = 5;
 
             switch(brush)
             {

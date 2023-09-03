@@ -54,6 +54,11 @@ void CaveSand::DrawAll(sf::RenderWindow* target)
     }
 }
 
+int CaveSand::GetNumberOfChunks()
+{
+    return chunks.size();
+}
+
 void CaveSand::RenderGroup(sf::RenderWindow* target)
 {
     //grab view
@@ -387,6 +392,11 @@ sf::Vector2i CaveSand::WorldToCell(sf::Vector2f world)
 
     //change units to cells
     fin /= CELL_SIZE;
+
+    if(world.x < 0)
+        fin.x--;
+    if(world.y < 0)
+        fin.y--;
 
     return (sf::Vector2i)fin;
 }

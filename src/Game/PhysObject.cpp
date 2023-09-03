@@ -11,59 +11,41 @@ PhysObject::PhysObject()
 
 PhysObject::~PhysObject() {}
 
+bool PhysObject::FullCollisionCheck(CaveSand* sand)
+{   
+    bool collided = false;
+
+    
+    //we first check if we moving down so that we don't do a ground check at an improper time
+    if(velocity.y > 0 && CheckGround(sand))
+    {
+        velocity.y = 0;
+        collided = true;
+    }
+
+    if(velocity.x > 0 && CheckRightWall(sand) || velocity.x < 0 && CheckLeftWall(sand))
+    {
+        velocity.x = 0;
+        collided = true;
+    }
+
+    if(collided)
+    {
+        FullCollisionCheck(sand);
+    }
+
+    return collided;
+}
+
 void PhysObject::Update(CaveSand* sand)
 {
     GameObject::Update(sand);
 
-    //use to store point of collision in cell coords
-    sf::Vector2i point;
+    velocity.y -= GRAVITY_SCALE * KyleTime::DeltaTime();
 
-    //update x position
     position.x += velocity.x * KyleTime::DeltaTime();
-    
-    //check if we're colliding
-    if(CellCollide(sand, point, false))
-    {
-        //figure out what direction we're moving in
-        int mod = 1; 
-        if(velocity.x < 0)
-            mod = -1;
+    position.y += velocity.y * KyleTime::DeltaTime();
 
-        //no more velocity because we ballin
-        velocity.x = 0;
-
-        //update our position so that we're hopefully not in the wall
-        position.x = (point.x + mod*(cellScale.x + 0.5f)) * CELL_SIZE;
-    }
-
-    //update gravity if necessary
-    if(doGravity)
-        velocity.y += GRAVITY_SCALE * KyleTime::DeltaTime();
-    
-    grounded = false; //reset grounded
-
-    //update y position
-    position.y -= velocity.y * KyleTime::DeltaTime();
-
-    //check the collision again, reusing point because we're already done with the data it held
-    if(CellCollide(sand, point, true))
-    {
-        //figure out what direction we're moving in
-        int mod = 1; 
-        if(velocity.y < 0)
-            mod = -1;
-
-        //no mas uppy or downy
-        velocity.y = 0;
-
-        //update our position so that we're hopefully not in the wall
-        position.y = (point.y + mod*(cellScale.y - 0.5f)) * CELL_SIZE;
-
-        //feet moment
-        //if(abs(point.y - cellPos.y) > cellScale.y)
-        //    position.y -= CELL_SIZE;
-
-        if(mod < 0)
-            grounded = true;
-    }
+    //std::cout << "VELOCITY! " << velocity.x << ", " << velocity.y << std::endl;
+    FullCollisionCheck(sand);
 }

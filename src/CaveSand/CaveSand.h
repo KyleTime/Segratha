@@ -72,6 +72,10 @@ namespace Segratha
             /// @param position position to focus on, generally the player.
             void Autoload(sf::RenderWindow* target);
 
+            /// @brief Gets the count of loaded chunks
+            /// @return Returns the number of chunks loaded
+            int GetNumberOfChunks();
+
             /// @brief given coordinates on the chunk grid, grab that chunk and return a pointer
             Chunk* GetChunk(sf::Vector2i chunkPos);
 

@@ -14,11 +14,9 @@ PlayerCore::~PlayerCore() {}
 
 void PlayerCore::Update(CaveSand* sand)
 {
-    //PhysObject::Update(sand);
-
-    float speed = 1000;
-
     float mod = 1;
+
+    velocity.x = 0;
 
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
         mod = 5;
@@ -27,26 +25,25 @@ void PlayerCore::Update(CaveSand* sand)
     
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
-        position.y -= speed * mod * KyleTime::DeltaTime();
-    }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-    {
-        position.y += speed * mod * KyleTime::DeltaTime();
+        velocity.y = jump * KyleTime::DeltaTime();
     }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        position.x += speed * mod * KyleTime::DeltaTime();
+        velocity.x = speed * mod * KyleTime::DeltaTime();
     }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-        position.x -= speed * mod * KyleTime::DeltaTime();
+        velocity.x = -speed * mod * KyleTime::DeltaTime();
     }
 
+    PhysObject::Update(sand);
     CAMERA::ChangeCenter(position);
 }
 
 void PlayerCore::Draw(sf::RenderWindow* target)
 {
+    static CaveSand* inst = CaveSand::GetInstance();
+
     sf::RectangleShape shape(sf::Vector2f(20, 20));
     shape.setPosition(position.x - 10, position.y - 10);
 

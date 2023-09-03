@@ -1,7 +1,5 @@
 #include "../CaveSand.h"
 
-#include <iostream>
-
 using namespace Segratha;
 
 void Cell::SandUpdate(int x, int y, Chunk* c)

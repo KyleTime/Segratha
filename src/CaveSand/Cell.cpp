@@ -138,7 +138,10 @@ bool Cell::isSolid()
 {
     switch(type)
     {
-        case SOLID || SAND:
+        case SOLID:
+            return true;
+            break;
+        case SAND:
             return true;
         default:
             return false;
