@@ -17,7 +17,7 @@ bool PhysObject::FullCollisionCheck(CaveSand* sand)
 
     
     //we first check if we moving down so that we don't do a ground check at an improper time
-    if(velocity.y > 0 && CheckGround(sand))
+    if(velocity.y > 0 && CheckGround(sand) || velocity.y < 0 && CheckCeiling(sand))
     {
         velocity.y = 0;
         collided = true;

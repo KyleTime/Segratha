@@ -202,6 +202,53 @@ bool GameObject::CheckLeftWall(CaveSand* sand)
     return false;
 }
 
+bool GameObject::CheckCeiling(CaveSand* sand)
+{
+    //grab world position above the character
+    float headPos = position.y - (cellScale.y) * CELL_SIZE;
+
+    //the cell position of the cell above the character
+    sf::Vector2i headCell = sand->WorldToCell(sf::Vector2f(position.x, headPos));
+
+    //is the cell above us solid?
+    bool solid = false;
+
+    //SWEEP FROM LEFT TO RIGHT!
+    for(int x = -cellScale.x; x < cellScale.x && !solid; x++)
+    {
+        solid = sand->GetCellAt(headCell.x + x, headCell.y)->isSolid();
+    }
+
+    //DEBUG THAT SHOWS THE SELECTED CELL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // sf::RectangleShape cellLook(sf::Vector2f(CELL_SIZE, CELL_SIZE));
+    // cellLook.setPosition(footCell.x * CELL_SIZE, footCell.y * CELL_SIZE);
+
+    // if(!solid)
+    //     cellLook.setFillColor(sf::Color::Transparent);
+    // else
+    //     cellLook.setFillColor(sf::Color::Blue);
+    
+    // cellLook.setOutlineThickness(5);
+    // cellLook.setOutlineColor(sf::Color::Red);
+
+    // target->draw(cellLook);
+    //END DEBUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if(solid)
+    {
+        //we need to figure out the depth at which we are collided
+
+        //calculate the distance between the cell and the head of the player (world)
+        float depth = (headCell.y * CELL_SIZE) - headPos;
+        //add the difference to the y position
+        position.y += depth + CELL_SIZE; //NOTE: I have no idea why the half cell addition is needed, it just is
+        
+        return true;
+    }
+
+    return false;
+}
+
 void GameObject::Update(CaveSand* sand)
 {
     cellPos = sand->WorldToCell(position); //update cellPos

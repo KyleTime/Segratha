@@ -52,6 +52,11 @@ namespace Segratha
             /// @return True if either side collides with a cell
             bool CheckLeftWall(CaveSand* cave);
 
+            /// @brief Checks all cells directly above the object's hitbox
+            /// @param cave the CaveSand engine to query
+            /// @return True if there is ceiling
+            bool CheckCeiling(CaveSand* cave);
+
             #pragma endregion
     };
 }
