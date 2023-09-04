@@ -81,7 +81,8 @@ bool GameObject::CheckGround(CaveSand* sand)
     //SWEEP FROM LEFT TO RIGHT!
     for(int x = -cellScale.x; x < cellScale.x && !solid; x++)
     {
-        solid = sand->GetCellAt(footCell.x + x, footCell.y)->isSolid();
+        Cell* c = sand->GetCellAt(footCell.x + x, footCell.y);
+        solid = c != nullptr && c->isSolid();
     }
 
     //if we hit something, let's try and steppy
@@ -216,7 +217,8 @@ bool GameObject::CheckCeiling(CaveSand* sand)
     //SWEEP FROM LEFT TO RIGHT!
     for(int x = -cellScale.x; x < cellScale.x && !solid; x++)
     {
-        solid = sand->GetCellAt(headCell.x + x, headCell.y)->isSolid();
+        Cell* c = sand->GetCellAt(headCell.x + x, headCell.y);
+        solid = c != nullptr && c->isSolid();
     }
 
     //DEBUG THAT SHOWS THE SELECTED CELL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

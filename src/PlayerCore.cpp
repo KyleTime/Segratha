@@ -19,21 +19,21 @@ void PlayerCore::Update(CaveSand* sand)
     velocity.x = 0;
 
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
-        mod = 5;
+        mod = 10;
     else
         mod = 1;
     
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
-        velocity.y = jump * KyleTime::DeltaTime();
+        velocity.y = jump;
     }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        velocity.x = speed * mod * KyleTime::DeltaTime();
+        velocity.x = speed * mod;
     }
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-        velocity.x = -speed * mod * KyleTime::DeltaTime();
+        velocity.x = -speed * mod;
     }
 
     PhysObject::Update(sand);

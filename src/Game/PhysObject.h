@@ -8,7 +8,7 @@ namespace Segratha
     class PhysObject : public GameObject
     {
         public:
-            const float GRAVITY_SCALE = -1000;
+            const float GRAVITY_SCALE = -120;
 
             sf::Vector2f velocity;
             bool grounded;

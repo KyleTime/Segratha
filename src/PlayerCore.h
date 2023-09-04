@@ -9,8 +9,8 @@ namespace Segratha
     class PlayerCore : public PhysObject
     {
         public:
-            float speed = 100000;
-            float jump = -200000;
+            float speed = 10;
+            float jump = -60;
 
             PlayerCore();
             ~PlayerCore();
