@@ -95,7 +95,9 @@ bool GameObject::CheckGround(CaveSand* sand)
 
         for(int y = -cellScale.y; y < cellScale.y && !steppy; y++)
         {
-            steppy = sand->GetCellAt(cellPos.x + cellScale.x - 1, cellPos.y + y)->isSolid() || sand->GetCellAt(cellPos.x - cellScale.x + 1, cellPos.y + y)->isSolid();
+            Cell* c1 = sand->GetCellAt(cellPos.x + cellScale.x - 1, cellPos.y + y);
+            Cell* c2 = sand->GetCellAt(cellPos.x - cellScale.x + 1, cellPos.y + y);
+            steppy = c1 != nullptr && c1->isSolid() || c2 != nullptr && c2->isSolid();
 
             if(steppy && cellScale.y - y > STEPPY_RANGE)
             {

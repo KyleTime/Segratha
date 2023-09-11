@@ -277,6 +277,7 @@ void CaveSand::Autoload(sf::RenderWindow* target)
         Chunk* c = *i;
         if(abs(c->xChunk - chunkPos.x) >= 2 || abs(c->yChunk - chunkPos.y) >= 2)
         {
+            delete c;
             chunks.erase(i);
             //i--;
         }
@@ -298,23 +299,23 @@ bool CaveSand::LoadAt(int x, int y)
     return true;
 }
 
-bool CaveSand::UnLoadAt(int x, int y)
-{
-    if(chunks.size() < 1)
-        return false;
+// bool CaveSand::UnLoadAt(int x, int y)
+// {
+//     if(chunks.size() < 1)
+//         return false;
     
-    for(auto i = chunks.begin(); i != chunks.end(); i++)
-    {
-        Chunk* c = *i;
-        if(c->xChunk == x && c->yChunk == y)
-        {
-            chunks.erase(i);
-            return true;
-        }
-    }
+//     for(auto i = chunks.begin(); i != chunks.end(); i++)
+//     {
+//         Chunk* c = *i;
+//         if(c->xChunk == x && c->yChunk == y)
+//         {
+//             chunks.erase(i);
+//             return true;
+//         }
+//     }
 
-    return false;
-}
+//     return false;
+// }
 
 Chunk* CaveSand::GetChunk(sf::Vector2i pos)
 {

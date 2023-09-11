@@ -1,6 +1,8 @@
 #include "Chunk.h"
 #include <algorithm>
 
+#include <iostream>
+
 using namespace Segratha;
 
 Chunk::Chunk(int xChunk, int yChunk)
@@ -30,6 +32,8 @@ void Chunk::Load()
 void Chunk::Unload()
 {
     //TODO: Write Cells to disk
+
+    std::cout << "UNLOAD CALLED!" << std::endl;
 }
 
 void Chunk::ChunkUpdate(unsigned char cycle)
