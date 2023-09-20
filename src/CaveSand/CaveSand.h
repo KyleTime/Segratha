@@ -1,7 +1,7 @@
 #ifndef CAVESAND_H
 #define CAVESAND_H
 
-#include "Chunk.h"
+#include "CaveSave.h"
 #include "ChunkRend.h"
 #include "Camera.h"
 #include "KyleTime.hpp"
@@ -48,6 +48,8 @@ namespace Segratha
             /// @param y chunk y position
             void FullTouch(int x, int y);
         public:
+            
+            CaveSave caveSave; //reference to the class that handles loading/unloading chunks
 
             CaveSand();
             ~CaveSand();
@@ -62,11 +64,16 @@ namespace Segratha
             /// @param y y location of chunk
             bool LoadAt(int x, int y);
 
-            /// @brief @brief loads a particular chunk position
+            /// @brief @brief unloads a particular chunk position
             /// @param x x location of chunk
             /// @param y y location of chunk
             /// @return whether the operation was successful
             bool UnLoadAt(int x, int y);
+
+            /// @brief unloads a particular chunk
+            /// @param c the chunk to unload
+            /// @return whether the operation was successful
+            bool UnLoad(Chunk* c);
 
             /// @brief Based on the position given, it figures out what chunks must be loaded or unloaded.
             /// @param position position to focus on, generally the player.

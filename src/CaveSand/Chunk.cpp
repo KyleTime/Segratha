@@ -13,7 +13,6 @@ Chunk::Chunk(int xChunk, int yChunk)
 
 Chunk::~Chunk()
 {
-    Unload(); //unload on destroy
 }
 
 void Chunk::Load()
@@ -27,13 +26,6 @@ void Chunk::Load()
             cells[x][y] = Cell(AIR);
         }
     }
-}
-
-void Chunk::Unload()
-{
-    //TODO: Write Cells to disk
-
-    std::cout << "UNLOAD CALLED!" << std::endl;
 }
 
 void Chunk::ChunkUpdate(unsigned char cycle)

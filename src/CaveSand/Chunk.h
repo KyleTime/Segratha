@@ -12,16 +12,9 @@ namespace Segratha
     class Chunk
     {
         private:
-  
-            //xChunk and yChunk refer to the grid of prospective chunks
-            //[(0,0)][(1,0)][(2,0)] <- each of these are chunks
-            //[(0,1)][(1,1)][(2,1)]
-            //[(0,2)][(1,2)][(2,2)] #also it can go negative
-            //
-            //The Load() function grabs pixels from that position on disk
+            
+            //currently, the Load() method fills the chunk with air
             void Load();
-            //Returns the Chunk to the disk.
-            void Unload();
 
         public:
             //whether this chunk is active
@@ -36,13 +29,13 @@ namespace Segratha
             Chunk(int xChunk, int yChunk);
             ~Chunk();
 
-            //updates every pixel in the chunk
+            //updates every cell in the chunk
             void ChunkUpdate(unsigned char cycle);
 
-            //At (x, y), tell the chunk a pixel just updated there
+            //At (x, y), tell the chunk a cell just updated there
             void Touch(int x, int y);
             
-            //wake all pixels at the edges of the chunk
+            //wake all cell at the edges of the chunk
             void EdgeTouch(int x, int y);
     };
 }

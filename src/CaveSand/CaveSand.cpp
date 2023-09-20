@@ -11,7 +11,7 @@ CaveSand::CaveSand()
 
 CaveSand::~CaveSand()
 {
-
+    //TODO: UNLOAD ALL CHUNKS HERE!
 }
 
 CaveSand* CaveSand::GetInstance()
@@ -277,7 +277,7 @@ void CaveSand::Autoload(sf::RenderWindow* target)
         Chunk* c = *i;
         if(abs(c->xChunk - chunkPos.x) >= 2 || abs(c->yChunk - chunkPos.y) >= 2)
         {
-            delete c;
+            UnLoad(c);
             chunks.erase(i);
             //i--;
         }
@@ -295,7 +295,17 @@ bool CaveSand::LoadAt(int x, int y)
         return false;
     }
 
-    chunks.push_back(new Chunk(x, y));
+    Chunk* c = caveSave.LoadChunk(x, y);
+    chunks.push_back(c);
+
+    return true;
+}
+
+bool CaveSand::UnLoad(Chunk* c)
+{
+    caveSave.WriteChunk(c);
+    delete c;
+
     return true;
 }
 
