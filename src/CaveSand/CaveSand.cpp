@@ -7,11 +7,12 @@ CaveSand* CaveSand::inst = nullptr;
 CaveSand::CaveSand()
     : cycle(0)
 {
+    caveSave = new CaveSave();
 }  
 
 CaveSand::~CaveSand()
 {
-    //TODO: UNLOAD ALL CHUNKS HERE!
+    delete caveSave;
 }
 
 CaveSand* CaveSand::GetInstance()
@@ -275,8 +276,13 @@ void CaveSand::Autoload(sf::RenderWindow* target)
     for(auto i = chunks.begin(); i != chunks.end() && chunks.size() > 12; i++)
     {
         Chunk* c = *i;
+
+        if(c == nullptr)
+            std::cerr << "FUCK FUCK FUCK FUCK FUCK FUCK" << std::endl;
+
         if(abs(c->xChunk - chunkPos.x) >= 2 || abs(c->yChunk - chunkPos.y) >= 2)
         {
+            std::cout << "Unloading the funny" << std::endl;
             UnLoad(c);
             chunks.erase(i);
             //i--;
@@ -286,7 +292,6 @@ void CaveSand::Autoload(sf::RenderWindow* target)
 
 bool CaveSand::LoadAt(int x, int y)
 {
-    //std::cout << "Loaded at: " << x << ", " << y << std::endl;
 
     //check if the chunk already exists
     if(GetChunk(x, y))
@@ -295,7 +300,8 @@ bool CaveSand::LoadAt(int x, int y)
         return false;
     }
 
-    Chunk* c = caveSave.LoadChunk(x, y);
+    std::cout << "Loaded at: " << x << ", " << y << std::endl;
+    Chunk* c = caveSave->LoadChunk(x, y);
     chunks.push_back(c);
 
     return true;
@@ -303,7 +309,16 @@ bool CaveSand::LoadAt(int x, int y)
 
 bool CaveSand::UnLoad(Chunk* c)
 {
-    caveSave.WriteChunk(c);
+    std::cout << "Unloading Chunk..." << std::endl;
+    std::cout << "Chunk at " << c->xChunk << ", " << c->yChunk << std::endl;
+
+    if(caveSave->ChunkExists(c->xChunk, c->yChunk))
+        std::cout << "funny" << std::endl;
+    else
+        std::cout << "no" << std::endl;
+
+    caveSave->WriteChunk(c);
+    std::cout << "Deleting Chunk..." << std::endl;
     delete c;
 
     return true;

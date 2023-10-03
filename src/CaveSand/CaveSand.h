@@ -49,7 +49,7 @@ namespace Segratha
             void FullTouch(int x, int y);
         public:
             
-            CaveSave caveSave; //reference to the class that handles loading/unloading chunks
+            CaveSave* caveSave; //reference to the class that handles loading/unloading chunks
 
             CaveSand();
             ~CaveSand();
