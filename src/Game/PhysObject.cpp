@@ -15,9 +15,19 @@ bool PhysObject::FullCollisionCheck(CaveSand* sand)
 {   
     bool collided = false;
     
-    //we first check if we moving down so that we don't do a ground check at an improper time
-    if(velocity.y > 0 && CheckGround(sand) || velocity.y < 0 && CheckCeiling(sand))
+    bool checkGround = CheckGround(sand);
+
+    //are we stuck as fuck?
+    if(velocity.y < 0 && checkGround)
     {
+        velocity.y = 0;
+        collided = true;
+    }
+    //we first check if we moving down so that we don't do a ground check at an improper time
+    else if((velocity.y > 0 && checkGround || velocity.y < 0 && CheckCeiling(sand)))
+    {
+
+
         velocity.y = 0;
         collided = true;
     }
@@ -36,6 +46,7 @@ void PhysObject::Update(CaveSand* sand)
     GameObject::Update(sand);
 
     velocity.y -= GRAVITY_SCALE * KyleTime::DeltaTime();
+    velocity.y = std::min(velocity.y, TERMINAL_VELOCITY); //cap gravity at TERMINAL_VELOCITY
 
     //these two numbers make it so that our speed values don't have to be so huge
     //speed is relative to Cell size

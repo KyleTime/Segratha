@@ -6,7 +6,7 @@ CaveSave::CaveSave()
 {
     //clear/create the thingy
     std::ofstream ofs;
-    ofs.open("test.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.open(filePath + fileName, std::ofstream::out | std::ofstream::trunc);
     ofs.close();
 }
 
@@ -65,8 +65,8 @@ Chunk* CaveSave::DeserializeChunk(int x, int y, std::fstream& file)
 
             //create the funny cell to insert into chunk
             Cell funnyCell = Cell((cell_type)tipo);
-            //funnyCell.color = sf::Color((unsigned char)r, (unsigned char)g, (unsigned char)b, (unsigned char)a);
-            funnyCell.color = sf::Color(255, 0, 0, (unsigned char)a);
+            funnyCell.color = sf::Color(((unsigned char)r + 128)/2, (unsigned char)g, (unsigned char)b, (unsigned char)a);
+            //funnyCell.color = sf::Color(255, 0, 0, (unsigned char)a);
 
             c->cells[x][y] = funnyCell;
         }
@@ -77,7 +77,7 @@ Chunk* CaveSave::DeserializeChunk(int x, int y, std::fstream& file)
 
 void CaveSave::WriteChunk(Chunk* c)
 {
-    std::cout << "Beginning Chunk Write..." << std::endl;
+    //std::cout << "Beginning Chunk Write..." << std::endl;
 
     //create filestream object
     std::fstream file;
@@ -85,7 +85,7 @@ void CaveSave::WriteChunk(Chunk* c)
     //open the file within our saves folder with the current selected name
     //ios::out -> enable writing to file
     //ios::in -> enable reading from file
-    file.open("test.goober", std::fstream::binary | std::fstream::in | std::fstream::out);
+    file.open(filePath + fileName, std::fstream::binary | std::fstream::in | std::fstream::out);
 
     if(!file)
     {
@@ -95,7 +95,7 @@ void CaveSave::WriteChunk(Chunk* c)
 
     if(ChunkExists(c->xChunk, c->yChunk))
     {
-        std::cout << "Chunk Exists!" << std::endl;
+        //std::cout << "Chunk Exists!" << std::endl;
         //overwrite current chunk info
 
         //seek to position in file
@@ -116,7 +116,7 @@ void CaveSave::WriteChunk(Chunk* c)
         
         SerializeChunk(c, file);
 
-        std::cout << "added chunk to end, number of chunks in file: " << chunkIndex.size() << std::endl;
+        //std::cout << "added chunk to end, number of chunks in file: " << chunkIndex.size() << std::endl;
     }
 
     //close once done
@@ -125,7 +125,7 @@ void CaveSave::WriteChunk(Chunk* c)
 
 Chunk* CaveSave::LoadChunk(int x, int y)
 {
-    std::cout << "Loading Chunk at " << x << ", " << y << std::endl;
+    //std::cout << "Loading Chunk at " << x << ", " << y << std::endl;
 
     if(ChunkExists(x, y))
     {
@@ -134,7 +134,7 @@ Chunk* CaveSave::LoadChunk(int x, int y)
         //open the file within our saves folder with the current selected name
         //ios::out -> enable writing to file
         //ios::in -> enable reading from file
-        file.open("test.goober", std::fstream::binary | std::fstream::in | std::fstream::out);
+        file.open(filePath + fileName, std::fstream::binary | std::fstream::in | std::fstream::out);
 
         if(!file)
         {
@@ -147,7 +147,7 @@ Chunk* CaveSave::LoadChunk(int x, int y)
         //seek to position in file
         file.seekg(pos);
 
-        std::cout << "Deserializing Chunk..." << std::endl;
+        //std::cout << "Deserializing Chunk..." << std::endl;
 
         //deserialize chunk
         Chunk* loadedChunk = DeserializeChunk(x, y, file);

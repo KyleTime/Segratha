@@ -10,7 +10,7 @@ namespace Segratha
     class CaveSave
     {
         private:
-            std::string filePath = "/WorldSaves/";
+            std::string filePath = "saves/";
             std::string fileName = "world.goober";
 
             std::map<std::pair<int, int>, std::streampos> chunkIndex;

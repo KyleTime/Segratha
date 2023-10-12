@@ -9,6 +9,7 @@ namespace Segratha
     {
         public:
             const float GRAVITY_SCALE = -120;
+            const float TERMINAL_VELOCITY = 250;
 
             sf::Vector2f velocity;
             bool grounded;

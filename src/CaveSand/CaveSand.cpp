@@ -282,7 +282,7 @@ void CaveSand::Autoload(sf::RenderWindow* target)
 
         if(abs(c->xChunk - chunkPos.x) >= 2 || abs(c->yChunk - chunkPos.y) >= 2)
         {
-            std::cout << "Unloading the funny" << std::endl;
+            //std::cout << "Unloading the funny" << std::endl;
             UnLoad(c);
             chunks.erase(i);
             //i--;
@@ -300,7 +300,7 @@ bool CaveSand::LoadAt(int x, int y)
         return false;
     }
 
-    std::cout << "Loaded at: " << x << ", " << y << std::endl;
+    //std::cout << "Loaded at: " << x << ", " << y << std::endl;
     Chunk* c = caveSave->LoadChunk(x, y);
     chunks.push_back(c);
 
@@ -309,16 +309,10 @@ bool CaveSand::LoadAt(int x, int y)
 
 bool CaveSand::UnLoad(Chunk* c)
 {
-    std::cout << "Unloading Chunk..." << std::endl;
-    std::cout << "Chunk at " << c->xChunk << ", " << c->yChunk << std::endl;
-
-    if(caveSave->ChunkExists(c->xChunk, c->yChunk))
-        std::cout << "funny" << std::endl;
-    else
-        std::cout << "no" << std::endl;
+    //std::cout << "Unloading Chunk at " << c->xChunk << ", " << c->yChunk << std::endl;
 
     caveSave->WriteChunk(c);
-    std::cout << "Deleting Chunk..." << std::endl;
+    //std::cout << "Deleting Chunk..." << std::endl;
     delete c;
 
     return true;

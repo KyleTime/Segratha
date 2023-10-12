@@ -87,14 +87,17 @@ void ChunkRend::ChunkDraw(sf::RenderWindow* target)
     //}
 
     if(!bound)
+    {
+        std::cout << "failed to bind" << std::endl;
         return;
+    }
 
     for(int x = 0; x < REND_SIZE; x++)
         for(int y = 0; y < REND_SIZE; y++)
         {
             int i = x + y * REND_SIZE;
 
-            sf::Color cellColor = (bound->cells[(x + startX) % CHUNK_SIZE][(y + startY) % CHUNK_SIZE]).color;
+            sf::Color cellColor = (bound->cells[(x + startX)][(y + startY)]).color;
 
             vert[i * 4 + 0].color = cellColor;
             vert[i * 4 + 1].color = cellColor;
