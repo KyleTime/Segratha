@@ -12,6 +12,7 @@ CaveSand::CaveSand()
 
 CaveSand::~CaveSand()
 {
+    UnloadAll();
     delete caveSave;
 }
 
@@ -278,7 +279,7 @@ void CaveSand::Autoload(sf::RenderWindow* target)
         Chunk* c = *i;
 
         if(c == nullptr)
-            std::cerr << "FUCK FUCK FUCK FUCK FUCK FUCK" << std::endl;
+            std::cerr << "FUCK FUCK FUCK FUCK FUCK FUCK [CHUNK IS NULL IN AUTOLOAD]" << std::endl;
 
         if(abs(c->xChunk - chunkPos.x) >= 2 || abs(c->yChunk - chunkPos.y) >= 2)
         {
@@ -316,6 +317,15 @@ bool CaveSand::UnLoad(Chunk* c)
     delete c;
 
     return true;
+}
+
+void CaveSand::UnloadAll()
+{
+    //std::cout << "Unloading remaining Chunks...";
+    for(auto i = chunks.begin(); i != chunks.end(); i++)
+    {
+        UnLoad(*i);
+    }
 }
 
 // bool CaveSand::UnLoadAt(int x, int y)

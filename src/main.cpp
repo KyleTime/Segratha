@@ -27,12 +27,12 @@ int main()
     window.setView(CAMERA::view);
 
     CaveSand* manager = CaveSand::GetInstance();
-    manager->LoadAt(-1, 0);
-    manager->LoadAt(0, 0);
-    manager->LoadAt(-1, 1);
-    manager->LoadAt(1, 0);
+    // manager->LoadAt(-1, 0);
+    // manager->LoadAt(0, 0);
+    // manager->LoadAt(-1, 1);
+    // manager->LoadAt(1, 0);
     
-    manager->Set(0, 50, Cell(SOLID));
+    //manager->Set(0, 50, Cell(SOLID));
 
     KyleTime::GetInstance();
 

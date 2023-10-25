@@ -14,22 +14,35 @@ PhysObject::~PhysObject() {}
 bool PhysObject::FullCollisionCheck(CaveSand* sand)
 {   
     bool collided = false;
-    
-    bool checkGround = CheckGround(sand);
 
-    //are we stuck as fuck?
-    if(velocity.y < 0 && checkGround)
-    {
-        velocity.y = 0;
-        collided = true;
-    }
     //we first check if we moving down so that we don't do a ground check at an improper time
-    else if((velocity.y > 0 && checkGround || velocity.y < 0 && CheckCeiling(sand)))
+    if(velocity.y > 0)
     {
+        if(CheckGround(sand))
+        {
+            velocity.y = 0;
+            collided = true;
+        }
+    }
+    else if(velocity.y < 0)
+    {
+        //bool g = CheckGround(sand); //check if we grounded
 
+        float posY = position.y; //store the current player position to revert to if we get stuck
 
-        velocity.y = 0;
-        collided = true;
+        if(CheckCeiling(sand)) //did we bonk?
+        {
+            //we also gotta check ground to make sure we ain't stuck
+            if(CheckGround(sand))
+            {
+                //STUCK AS FUCK
+                position.y = posY;
+            }
+
+            //collision
+            velocity.y = 0;
+            collided = true;
+        }
     }
 
     if(velocity.x > 0 && CheckRightWall(sand) || velocity.x < 0 && CheckLeftWall(sand))

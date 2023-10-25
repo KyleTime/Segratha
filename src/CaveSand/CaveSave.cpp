@@ -5,14 +5,90 @@ using namespace Segratha;
 CaveSave::CaveSave()
 {
     //clear/create the thingy
-    std::ofstream ofs;
-    ofs.open(filePath + fileName, std::ofstream::out | std::ofstream::trunc);
-    ofs.close();
+    // std::ofstream ofs;
+    // ofs.open(savePath + saveName, std::ofstream::out | std::ofstream::trunc);
+    // ofs.close();
+
+    std::fstream fs;
+    fs.open(savePath + saveName);
+
+    //if we don't have a file, make a new one!
+    if(!fs)
+    {
+        fs.open(savePath + saveName, std::ofstream::out | std::ofstream::trunc);
+    }
+    //if we do, read it in! (as long as it ain't empty)
+    else if(!(fs.peek() == std::ifstream::traits_type::eof()))
+    {
+        //std::cout << "found save!" << std::endl;
+
+        //go to end (minus an int)
+        fs.seekg(-sizeof(int), std::ios::end);
+        //go back a space so we can read the int
+        //fs.seekg(-sizeof(int)); 
+
+        int mapSize = 0;
+        fs.read(reinterpret_cast<char*>(&mapSize), sizeof(int));
+        // fs.read(reinterpret_cast<char*>(&mapSize), sizeof(int));
+
+        std::cout << "Read Map Size as " << mapSize << std::endl;
+
+        //now we go back by the mapSize and read it in
+        fs.seekg(-(mapSize * (sizeof(std::pair<int, int>) + sizeof(std::streampos)) + sizeof(int)), std::ios::end);
+
+        for (int i = 0; i < mapSize; i++) {
+            std::pair<int, int> key;
+            std::streampos value;
+            
+            //use these funny functions to interpret the shit back into stuff we can use
+            fs.read(reinterpret_cast<char*>(&key), sizeof(std::pair<int, int>));
+            fs.read(reinterpret_cast<char*>(&value), sizeof(value));
+            
+            //std::cout << "KEY: " << key.first << ", " << key.second << " VALUE: " << value << std::endl;
+
+            //LOADDDDD
+            chunkIndex[key] = value;
+        }
+
+        eofMod = -(mapSize * (sizeof(std::pair<int, int>) + sizeof(std::streampos))) + -sizeof(int); //set the eof mod for the next chunk write
+
+        //std::cout << "loaded to a size of " << chunkIndex.size() << std::endl;
+    }
+
+    fs.close();
 }
 
 CaveSave::~CaveSave()
 {
+    //clear/create the thingy (mostly bc we want to clear lol)
+    // std::ofstream ofs;
+    // ofs.open(savePath + saveName, std::ofstream::out | std::ofstream::trunc);
+    // ofs.close();
 
+    std::cout << "Cave Saving..." << std::endl;
+
+    std::fstream file;
+
+    file.open(savePath + saveName, std::fstream::binary | std::fstream::in | std::fstream::out);
+
+    if(file)
+    {
+        file.seekg(0, std::ios::end);
+
+        int size = chunkIndex.size();
+
+        //add to the end lol
+        for(const auto& pair : chunkIndex)
+        {
+            file.write(reinterpret_cast<const char*>(&pair.first), sizeof(std::pair<int, int>));
+            file.write(reinterpret_cast<const char*>(&pair.second), sizeof(std::streampos));
+        }
+
+        std::cout << "size: " << size << std::endl;
+        file.write(reinterpret_cast<const char*>(&size), sizeof(int));
+    }
+
+    file.close();
 }
 
 bool CaveSave::ChunkExists(int x, int y)
@@ -85,7 +161,7 @@ void CaveSave::WriteChunk(Chunk* c)
     //open the file within our saves folder with the current selected name
     //ios::out -> enable writing to file
     //ios::in -> enable reading from file
-    file.open(filePath + fileName, std::fstream::binary | std::fstream::in | std::fstream::out);
+    file.open(savePath + saveName, std::fstream::binary | std::fstream::in | std::fstream::out);
 
     if(!file)
     {
@@ -109,7 +185,8 @@ void CaveSave::WriteChunk(Chunk* c)
         //write chunk to end of file
 
         //go to the end
-        file.seekg(0, std::ios::end);
+        file.seekg(0 + eofMod, std::ios::end);
+        eofMod = 0; //reset eofMod
 
         //store the file position of the chunk
         chunkIndex[std::make_pair(c->xChunk, c->yChunk)] = file.tellg();
@@ -129,12 +206,14 @@ Chunk* CaveSave::LoadChunk(int x, int y)
 
     if(ChunkExists(x, y))
     {
+        // std::cout << "Chunk at (" << x << ", " << y << ") EXISTS" << std::endl;
+
         std::fstream file;
 
         //open the file within our saves folder with the current selected name
         //ios::out -> enable writing to file
         //ios::in -> enable reading from file
-        file.open(filePath + fileName, std::fstream::binary | std::fstream::in | std::fstream::out);
+        file.open(savePath + saveName, std::fstream::binary | std::fstream::in | std::fstream::out);
 
         if(!file)
         {
@@ -158,6 +237,8 @@ Chunk* CaveSave::LoadChunk(int x, int y)
     }
     else
     {
+        // std::cout << "Chunk at (" << x << ", " << y << ") do not exist yet" << std::endl;
+
         //if we don't have a chunk in memory, just make a new one lol
         Chunk* fresh = new Chunk(x, y);
         return fresh;

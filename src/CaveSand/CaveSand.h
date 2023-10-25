@@ -75,6 +75,9 @@ namespace Segratha
             /// @return whether the operation was successful
             bool UnLoad(Chunk* c);
 
+            /// @brief Unloads EVERY chunk and saves it
+            void UnloadAll();
+
             /// @brief Based on the position given, it figures out what chunks must be loaded or unloaded.
             /// @param position position to focus on, generally the player.
             void Autoload(sf::RenderWindow* target);
