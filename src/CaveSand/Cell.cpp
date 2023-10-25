@@ -11,6 +11,8 @@ Cell::Cell()
 Cell::Cell(cell_type type)
     : cycle(0), type(type)
 {
+    static char offset = 0;
+
     switch (type)
     {
     case AIR:
@@ -24,11 +26,16 @@ Cell::Cell(cell_type type)
         break;
     case SAND:
         color = sf::Color::Yellow;
+        color.r += offset % 2;
+        color.g += (offset + 5) % 2;
+        color.b += (offset + 12) % 2;
         break;
     default:
         color = sf::Color::Magenta;
         break;
     }
+
+    offset++;
 }
 
 Cell::~Cell()
@@ -59,7 +66,7 @@ void Cell::Update(int x, int y, unsigned char cycle, Chunk* c)
     }
 }
 
-bool Cell::Move(int x, int y, int xm, int ym, Chunk* c, bool replace)
+bool Cell::Move(int& x, int& y, int xm, int ym, Chunk* c, bool replace)
 {
     static CaveSand* inst = CaveSand::GetInstance();
 
@@ -117,6 +124,11 @@ bool Cell::Move(int x, int y, int xm, int ym, Chunk* c, bool replace)
         //touch!
         inst->Touch(nx, ny, cd);
         inst->Touch(x, y, c);
+
+        //alter position values
+        x = nx;
+        y = ny;
+
         return true;
     }
 
@@ -168,4 +180,13 @@ bool Cell::isGas()
         default:
             return false;
     }
+}
+
+char Cell::PixelRand()
+{
+    static char num = 0;
+
+    num++;
+
+    return num;
 }

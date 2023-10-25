@@ -29,13 +29,16 @@ namespace Segratha
             bool isLiquid();
             bool isGas();
 
+            //returns the integer contained within, incremented every call
+            char PixelRand();
+
         private:
             //general movement functions
 
             //move by (xM, yM) in the current chunk given rel coords (x, y)
             //WARNING: Assumes that you're not moving the cell by more than 1 chunk in distance. You shouldn't be doing that anyway, we'd have weird multithreading issues.
             //also, there's a funny optional bool on the end, setting it to true will have the move function ignore whether the destination is solid
-            bool Move(int x, int y, int xm, int ym, Chunk* c, bool replace = false);
+            bool Move(int& x, int& y, int xm, int ym, Chunk* c, bool replace = false);
             
             //update functions for different types
 

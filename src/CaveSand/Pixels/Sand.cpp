@@ -10,9 +10,9 @@ void Cell::SandUpdate(int x, int y, Chunk* c)
 
     //int ydist = 1; //the distance we're gonna move (on the y)
 
-    if(!Move(x, y, 0, 1, c))
-        if(!Move(x, y, 1 * (-1 * (cycle % 2)), 1, c))
-            Move(x, y, -1 * (-1 * ((cycle + 1) % 2)), 1, c);
+    char curNum = PixelRand();
 
-    
+    if(!Move(x, y, 0, 1, c) && curNum % 2 == 0)
+        if(!Move(x, y, 1, 1, c))
+            Move(x, y, -1, 1, c);
 }

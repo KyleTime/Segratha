@@ -155,7 +155,7 @@ bool GameObject::CheckRightWall(CaveSand* sand)
     bool solid = false;
 
     //SWEEP FROM TOP TO BOTTOM! (It's important that we raise the bottom collider by steppy so we don't get weird shit goin on)
-    for(int y = -cellScale.y; y <= cellScale.y - STEPPY_RANGE && !solid; y++)
+    for(int y = -cellScale.y + 1; y <= cellScale.y - STEPPY_RANGE && !solid; y++)
     {
         //checks the cell for being solid (also for whether it exists)
         Cell* c = sand->GetCellAt(rightCell.x, rightCell.y + y);
@@ -186,7 +186,7 @@ bool GameObject::CheckLeftWall(CaveSand* sand)
     bool solid = false;
 
     //SWEEP FROM TOP TO BOTTOM! (It's important that we raise the bottom collider by steppy so we don't get weird shit goin on)
-    for(int y = -cellScale.y; y <= cellScale.y - STEPPY_RANGE && !solid; y++)
+    for(int y = -cellScale.y + 1; y <= cellScale.y - STEPPY_RANGE && !solid; y++)
     {
         //checks the cell for existing and whether it's solid
         Cell* c = sand->GetCellAt(leftCell.x, leftCell.y + y);

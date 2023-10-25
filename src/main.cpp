@@ -45,7 +45,7 @@ int main()
     
     sf::Text mousePos("MOUSE: ", font, 50);
 
-    float timer = 0.01f;
+    float timer = 0.005f;
     while (window.isOpen())
     {
         KyleTime::UpdateDelta(); //Update Deltatime calculation
