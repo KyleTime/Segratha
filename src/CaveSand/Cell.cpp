@@ -2,10 +2,11 @@
 
 using namespace Segratha;
 
+CaveSand* Cell::inst = CaveSand::GetInstance();
+
 Cell::Cell()
     : color(sf::Color::Magenta), cycle(0), type(AIR)
 {
-
 }
 
 Cell::Cell(cell_type type)
@@ -45,8 +46,6 @@ Cell::~Cell()
 
 void Cell::Update(int x, int y, unsigned char cycle, Chunk* c)
 {
-    static CaveSand* inst = CaveSand::GetInstance();
-
     //pretty sure this worries about if we move into a new chunk and we need to update the new shit
     if(this->cycle == cycle)
     {
@@ -63,7 +62,47 @@ void Cell::Update(int x, int y, unsigned char cycle, Chunk* c)
         case SAND:
             SandUpdate(x, y, c);
             break;
+        case WATER:
+            WaterUpdate(x, y, c);
+            break;
     }
+}
+
+Chunk* Cell::ChunkSteppy(int& x, int& y, Chunk* c)
+{
+    Chunk* cd = c;
+
+    //check if we exceed bounds, then move the chunk and the position
+    if(x > CHUNK_SIZE - 1) //MORE RIGHT
+    {
+        //change which chunk we're looking at
+        cd = inst->GetChunk(c->xChunk + 1, c->yChunk);
+        x %= CHUNK_SIZE; //clamp to funny
+    }
+    else if(x < 0) //MORE LEFT
+    {
+        //change which chunk we're looking at
+        cd = inst->GetChunk(c->xChunk - 1, c->yChunk);
+        x = CHUNK_SIZE - 1 + x; //shift that shit
+    }
+    
+    //check again for y position
+    if(y > CHUNK_SIZE - 1) //MORE DOWN
+    {
+        //change which chunk we're looking at
+        cd = inst->GetChunk(c->xChunk, c->yChunk + 1);
+        y %= CHUNK_SIZE; //funny clamp
+    }
+    else if(y < 0) //MORE UP
+    {
+        //change which chunk we're looking at
+        cd = inst->GetChunk(c->xChunk, c->yChunk - 1);
+        y = CHUNK_SIZE - 1 + y; //shift that shit
+
+        //cycle--; //we do a little trolling
+    }
+
+    return cd;
 }
 
 bool Cell::Move(int& x, int& y, int xm, int ym, Chunk* c, bool replace)
@@ -77,37 +116,7 @@ bool Cell::Move(int& x, int& y, int xm, int ym, Chunk* c, bool replace)
     int nx = x + xm;
     int ny = y + ym;
     
-    Chunk* cd = c;
-
-    //check if we exceed bounds, then move the chunk and the position
-    if(nx > CHUNK_SIZE - 1) //MORE RIGHT
-    {
-        //change which chunk we're looking at
-        cd = inst->GetChunk(c->xChunk + 1, c->yChunk);
-        nx %= CHUNK_SIZE; //clamp to funny
-    }
-    else if(nx < 0) //MORE LEFT
-    {
-        //change which chunk we're looking at
-        cd = inst->GetChunk(c->xChunk - 1, c->yChunk);
-        nx = CHUNK_SIZE - 1 + nx; //shift that shit
-    }
-    
-    //check again for y position
-    if(ny > CHUNK_SIZE - 1) //MORE DOWN
-    {
-        //change which chunk we're looking at
-        cd = inst->GetChunk(c->xChunk, c->yChunk + 1);
-        ny %= CHUNK_SIZE; //funny clamp
-    }
-    else if(ny < 0) //MORE UP
-    {
-        //change which chunk we're looking at
-        cd = inst->GetChunk(c->xChunk, c->yChunk - 1);
-        ny = CHUNK_SIZE - 1 + ny; //shift that shit
-
-        //cycle--; //we do a little trolling
-    }
+    Chunk* cd = ChunkSteppy(nx, ny, c);
 
     //check if destination chunk is null
     if(!cd)
@@ -132,6 +141,11 @@ bool Cell::Move(int& x, int& y, int xm, int ym, Chunk* c, bool replace)
         return true;
     }
 
+    return false;
+}
+
+bool Cell::SolidAt(int x, int y, int xm, int ym, Chunk* c)
+{
     return false;
 }
 
