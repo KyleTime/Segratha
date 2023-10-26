@@ -4,7 +4,7 @@ using namespace Segratha;
 
 void Cell::SandUpdate(int x, int y, Chunk* c)
 {
-    static CaveSand* inst = CaveSand::GetInstance();
+    CaveSand* inst = GetSand();
 
     //Chunk* c = inst->GetChunkCell(xW, yW);
 

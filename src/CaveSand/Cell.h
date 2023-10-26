@@ -8,6 +8,7 @@
 namespace Segratha
 {
     class Chunk;
+    class CaveSand;
 
     enum cell_type : unsigned char { AIR, SOLID, SAND, WATER };
 
@@ -35,15 +36,24 @@ namespace Segratha
         private:
             //general movement functions
 
+            /// @brief Gets the CaveSand Engine.
+            /// @return A pointer to the CaveSand Engine.
+            CaveSand* GetSand();
+
+            Chunk* ChunkSteppy(int& x, int& y, Chunk* c);
+
             //move by (xM, yM) in the current chunk given rel coords (x, y)
             //WARNING: Assumes that you're not moving the cell by more than 1 chunk in distance. You shouldn't be doing that anyway, we'd have weird multithreading issues.
             //also, there's a funny optional bool on the end, setting it to true will have the move function ignore whether the destination is solid
             bool Move(int& x, int& y, int xm, int ym, Chunk* c, bool replace = false);
-            
+
             //update functions for different types
 
             //Updates a pixel as if it were sand
             void SandUpdate(int x, int y, Chunk* c);
+
+            //Updates a pixel as if it were water
+            void WaterUpdate(int x, int y, Chunk* c);
     };
 }
 
