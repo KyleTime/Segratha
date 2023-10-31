@@ -84,6 +84,14 @@ int main()
         {
             brush = 2;
         }
+        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num4))
+        {
+            brush = 3;
+        }
+        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num5))
+        {
+            brush = 4;
+        }
 
         sf::Vector2i mouse = sf::Mouse::getPosition(window);
 
@@ -110,25 +118,30 @@ int main()
             //mouse = manager->ScreenToCell(mouse);
 
             int brushSize = 5;
+            cell_type t = AIR;
 
             switch(brush)
             {
                 case 0:
-                    for(int x = -brushSize; x <= brushSize; x++)
-                        for(int y = -brushSize; y <= brushSize; y++)
-                            manager->Set(mouse.x + x, mouse.y + y, Cell(SOLID));
+                    t = AIR;
                     break;
                 case 1:
-                    for(int x = -brushSize; x <= brushSize; x++)
-                        for(int y = -brushSize; y <= brushSize; y++)
-                            manager->Set(mouse.x + x, mouse.y + y, Cell(SAND));
+                    t = SOLID;
                     break;
                 case 2:
-                    for(int x = -brushSize; x <= brushSize; x++)
-                        for(int y = -brushSize; y <= brushSize; y++)
-                            manager->Set(mouse.x + x, mouse.y + y, Cell(AIR));
+                    t = SAND;
+                    break;
+                case 3:
+                    t = WATER;
+                    break;
+                case 4:
+                    t = GAS;
                     break;
             }
+
+            for(int x = -brushSize; x <= brushSize; x++)
+                        for(int y = -brushSize; y <= brushSize; y++)
+                            manager->Set(mouse.x + x, mouse.y + y, Cell(t));
         }
 
         //-----------------------------------------------------------------------------------------------------------------------------------------

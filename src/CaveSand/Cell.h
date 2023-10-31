@@ -10,7 +10,7 @@ namespace Segratha
     class Chunk;
     class CaveSand;
 
-    enum cell_type : unsigned char { AIR, SOLID, SAND, WATER };
+    enum cell_type : unsigned char { AIR, SOLID, SAND, WATER, GAS };
 
     class Cell
     {
@@ -30,6 +30,9 @@ namespace Segratha
             bool isLiquid();
             bool isGas();
 
+            //returns the density of the selected cell
+            int GetDensity();
+
             //returns the integer contained within, incremented every call
             char PixelRand();
 
@@ -42,18 +45,27 @@ namespace Segratha
 
             Chunk* ChunkSteppy(int& x, int& y, Chunk* c);
 
-            //move by (xM, yM) in the current chunk given rel coords (x, y)
-            //WARNING: Assumes that you're not moving the cell by more than 1 chunk in distance. You shouldn't be doing that anyway, we'd have weird multithreading issues.
-            //also, there's a funny optional bool on the end, setting it to true will have the move function ignore whether the destination is solid
-            bool Move(int& x, int& y, int xm, int ym, Chunk* c, bool replace = false);
+            /// @brief Attempts to move a Cell by (xm, ym)
+            /// @param x X Position of Cell
+            /// @param y Y Position of Cell
+            /// @param xm X MOVE of Cell
+            /// @param ym Y MOVE of Cell
+            /// @param c Current Chunk
+            /// @param useDensity If set to true, elements that are moving downward will fall through less dense material, moving up works the opposite. Horizontal movement goes through less dense materials.
+            /// @param replace If set to true, the move will not worry about whether the attempted cell is solid or not.
+            /// @return Whether the cell was able to move
+            bool Move(int& x, int& y, int xm, int ym, Chunk* c, bool useDensity = false, bool replace = false);
 
             //update functions for different types
 
-            //Updates a pixel as if it were sand
+            //Updates a cell as if it were sand
             void SandUpdate(int x, int y, Chunk* c);
 
-            //Updates a pixel as if it were water
-            void WaterUpdate(int x, int y, Chunk* c);
+            //Updates a cell as if it were water
+            void WaterUpdate(int x, int y, int speed, Chunk* c);
+
+            //Updates a cell as if it were gas
+            void GasUpdate(int x, int y, int speed, Chunk* c);
     };
 }
 

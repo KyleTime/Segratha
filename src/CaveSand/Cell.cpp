@@ -30,6 +30,9 @@ Cell::Cell(cell_type type)
         color.g += (offset + 5) % 2;
         color.b += (offset + 12) % 2;
         break;
+    case GAS:
+        color = sf::Color::White;
+        break;
     default:
         color = sf::Color::Magenta;
         break;
@@ -62,6 +65,12 @@ void Cell::Update(int x, int y, unsigned char cycle, Chunk* c)
             break;
         case SAND:
             SandUpdate(x, y, c);
+            break;
+        case WATER:
+            WaterUpdate(x, y, 3, c);
+            break;
+        case GAS:
+            GasUpdate(x, y, 1, c);
             break;
     }
 }
@@ -112,7 +121,7 @@ Chunk* Cell::ChunkSteppy(int& x, int& y, Chunk* c)
     return cd;
 }
 
-bool Cell::Move(int& x, int& y, int xm, int ym, Chunk* c, bool replace)
+bool Cell::Move(int& x, int& y, int xm, int ym, Chunk* c, bool useDensity, bool replace)
 {
     CaveSand* inst = GetSand();
 
@@ -161,11 +170,32 @@ bool Cell::Move(int& x, int& y, int xm, int ym, Chunk* c, bool replace)
 
     //AT THIS POINT, "cd" SHOULD BE A VALID DESTINATION CHUNK THAT WE'RE MOVING INTO AND "nx" AND "ny" SHOULD BE WITHIN BOUNDS
 
-    //can we move there? (are we replacing or is the destination air?)
-    if(replace || cd->cells[nx][ny].isAir())
+    //whether the cell should move through the other cell for density reasons
+    bool ableToDense = false;
+
+    if(useDensity)
     {
+        ableToDense = cd->cells[nx][ny].GetDensity() < c->cells[x][y].GetDensity();
+
+        //we going up
+        if(ym < 0)
+        {
+            ableToDense = !ableToDense;
+        }
+
+        int diff = abs(cd->cells[nx][ny].GetDensity() - c->cells[x][y].GetDensity());
+        if(ableToDense && PixelRand() % std::max(5, diff / 2) == 0)
+        {
+            ableToDense = false;
+        }
+    }
+
+    //can we move there? (are we replacing or is the destination air?)
+    if(replace || cd->cells[nx][ny].isAir() || ableToDense)
+    {
+        Cell cell = cd->cells[nx][ny];
         cd->cells[nx][ny] = c->cells[x][y]; //move cell to destination
-        c->cells[x][y] = Cell(AIR); //replace old position with air
+        c->cells[x][y] = cell; //replace old position with air
 
         //touch!
         inst->Touch(nx, ny, cd);
@@ -223,8 +253,34 @@ bool Cell::isGas()
     {
         case AIR:
             return true;
+        case GAS:
+            return true;
         default:
             return false;
+    }
+}
+
+int Cell::GetDensity()
+{
+    //how density works!
+    //the greater the integer, the greater the density
+    //0 is the density of air
+    
+    switch(type)
+    {
+        case AIR:
+            return 0;
+        case SOLID:
+            return 100;
+        case SAND:
+            return 75;
+        case WATER:
+            return 50;
+        case GAS:
+            return -100;
+        default:
+            return 0;
+            break;
     }
 }
 
