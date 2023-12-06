@@ -12,7 +12,7 @@ void Cell::WaterUpdate(int x, int y, int speed, Chunk* c)
 
     curNum = (curNum % 2) - ((curNum + 1) % 2); //returns either -1 or 1 I think
 
-    if(!Move(x, y, 0, 1, c))
+    if(!Move(x, y, 0, 1, c, true, false))
     {
         char sleep = PixelRand() % 5;
 
@@ -23,13 +23,17 @@ void Cell::WaterUpdate(int x, int y, int speed, Chunk* c)
 
         for(int i = 0; i < std::min(speed, 6); i++)
         {
-            if(!Move(x, y, curNum, 0, c))
+            if(!Move(x, y, curNum, 0, c, true, false))
             {
                 curNum *= -1;
                 speed++;
             }
 
-            Move(x,y,0,1,c);
+            Move(x,y,0,1,c, true, false);
         }
+    }
+    else if(PixelRand() % 5 == 0)
+    {
+        Move(x, y, curNum, 0, c, true, false);
     }
 }

@@ -4,7 +4,7 @@
 using namespace Segratha;
 
 PhysObject::PhysObject()
-    : GameObject(), velocity(sf::Vector2f()), grounded(false), doGravity(true)
+    : GameObject(), velocity(sf::Vector2f()), grounded(false), state(OPEN_AIR)
 {
 
 }
@@ -14,12 +14,14 @@ PhysObject::~PhysObject() {}
 bool PhysObject::FullCollisionCheck(CaveSand* sand)
 {   
     bool collided = false;
+    grounded = false;
 
     //we first check if we moving down so that we don't do a ground check at an improper time
     if(velocity.y > 0)
     {
         if(CheckGround(sand))
         {
+            grounded = true;
             velocity.y = 0;
             collided = true;
         }
@@ -54,19 +56,60 @@ bool PhysObject::FullCollisionCheck(CaveSand* sand)
     return collided;
 }
 
-void PhysObject::Update(CaveSand* sand)
+void PhysObject::StateUpdate(CaveSand* sand)
 {
-    GameObject::Update(sand);
+    cellTypeList list = CellCollide(sand);
 
+    if(list.list[LIQUID] > list.size*0.75f)
+    {
+        state = SWIMMING;
+    }
+    else
+    {
+        state = OPEN_AIR;
+    }
+}
+
+void PhysObject::GravityUpdate()
+{
     velocity.y -= GRAVITY_SCALE * KyleTime::DeltaTime();
     velocity.y = std::min(velocity.y, TERMINAL_VELOCITY); //cap gravity at TERMINAL_VELOCITY
+}
 
+void PhysObject::Drag()
+{
+    float XDRAG = 0;
+    float YDRAG = 0;
+
+    switch(state)
+    {
+        case SWIMMING:
+            XDRAG = 2;
+            YDRAG = 2;
+            break;
+        default:
+            break;
+    }
+
+    velocity.x -= velocity.x * XDRAG * KyleTime::DeltaTime();
+    velocity.y -= velocity.y * YDRAG * KyleTime::DeltaTime();
+}
+
+void PhysObject::MoveSegmented(CaveSand* sand)
+{
     //these two numbers make it so that our speed values don't have to be so huge
     //speed is relative to Cell size
     float transVelX = velocity.x * CELL_SIZE;
     float transVelY = velocity.y * CELL_SIZE;
 
+    if(state == SWIMMING)
+    {
+        transVelY *= 0.6f;
+        transVelX *= 0.6f;
+    }
+
     //DIVIDE STUFF BY DIV
+    //note: I forgot what this does exactly
     int div = std::max((int)std::abs(std::max(transVelX, transVelY)) / 400, 4);
 
     //DIVIDE THESE BY 4 TO GET HOW MUCH THE PLAYER MOVES IN A SINGLE LOOP
@@ -95,8 +138,17 @@ void PhysObject::Update(CaveSand* sand)
         }
     }
 
-    // position.x += velocity.x * KyleTime::DeltaTime();
-    // position.y += velocity.y * KyleTime::DeltaTime();
+}
 
-    // FullCollisionCheck(sand);
+void PhysObject::Update(CaveSand* sand)
+{
+    GameObject::Update(sand);
+
+    StateUpdate(sand);
+
+    GravityUpdate();
+
+    Drag();
+
+    MoveSegmented(sand);
 }

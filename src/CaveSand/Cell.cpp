@@ -21,6 +21,12 @@ Cell::Cell(cell_type type)
     case SOLID:
         color = sf::Color(100, 100, 100);
         break;
+    case LIQUID:
+        color = sf::Color(70, 70, 85, 255);
+        break;
+    case GAS:
+        color = sf::Color::White;
+        break;
     case WATER:
         color = sf::Color::Blue;
         break;
@@ -29,9 +35,6 @@ Cell::Cell(cell_type type)
         color.r += offset % 2;
         color.g += (offset + 5) % 2;
         color.b += (offset + 12) % 2;
-        break;
-    case GAS:
-        color = sf::Color::White;
         break;
     default:
         color = sf::Color::Magenta;
@@ -184,14 +187,14 @@ bool Cell::Move(int& x, int& y, int xm, int ym, Chunk* c, bool useDensity, bool 
         }
 
         int diff = abs(cd->cells[nx][ny].GetDensity() - c->cells[x][y].GetDensity());
-        if(ableToDense && PixelRand() % std::max(5, diff / 2) == 0)
+        if(ableToDense && PixelRand() % std::max(10, diff / 2) == 0)
         {
             ableToDense = false;
         }
     }
 
     //can we move there? (are we replacing or is the destination air?)
-    if(replace || cd->cells[nx][ny].isAir() || ableToDense)
+    if(replace || cd->cells[nx][ny].IsAir() || ableToDense)
     {
         Cell cell = cd->cells[nx][ny];
         cd->cells[nx][ny] = c->cells[x][y]; //move cell to destination
@@ -211,7 +214,7 @@ bool Cell::Move(int& x, int& y, int xm, int ym, Chunk* c, bool useDensity, bool 
     return false;
 }
 
-bool Cell::isAir()
+bool Cell::IsAir()
 {
     switch(type)
     {
@@ -222,42 +225,37 @@ bool Cell::isAir()
     }
 }
 
-bool Cell::isSolid()
+bool Cell::IsSolid()
+{
+    return GetState() == SOLID;
+}
+
+bool Cell::IsLiquid()
+{
+    return GetState() == LIQUID;
+}
+
+bool Cell::IsGas()
+{
+    return GetState() == GAS;
+}
+
+cell_type Cell::GetState(cell_type t)
 {
     switch(type)
     {
-        case SOLID:
-            return true;
-            break;
         case SAND:
-            return true;
-        default:
-            return false;
-    }
-}
-
-bool Cell::isLiquid()
-{
-    switch(type)
-    {
+            return SOLID;
         case WATER:
-            return true;
+            return LIQUID;
         default:
-            return false;
+            return t;
     }
 }
 
-bool Cell::isGas()
+cell_type Cell::GetState()
 {
-    switch(type)
-    {
-        case AIR:
-            return true;
-        case GAS:
-            return true;
-        default:
-            return false;
-    }
+    return GetState(type);
 }
 
 int Cell::GetDensity()
@@ -270,15 +268,18 @@ int Cell::GetDensity()
     {
         case AIR:
             return 0;
-        case SOLID:
-            return 100;
         case SAND:
             return 75;
-        case WATER:
-            return 50;
-        case GAS:
-            return -100;
         default:
+            switch(GetState(type))
+            {
+                case SOLID:
+                    return 100;
+                case LIQUID:
+                    return 50;
+                case GAS:
+                    return -100;
+            }
             return 0;
             break;
     }

@@ -16,14 +16,16 @@ void PlayerCore::Update(CaveSand* sand)
 {
     float mod = 1;
 
-    velocity.x = 0;
 
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
         mod = 10;
     else
         mod = 1;
     
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    if(velocity.x <= speed * mod)
+        velocity.x = 0;
+
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::W) && grounded)
     {
         velocity.y = jump;
     }

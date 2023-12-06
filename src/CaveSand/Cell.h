@@ -10,7 +10,7 @@ namespace Segratha
     class Chunk;
     class CaveSand;
 
-    enum cell_type : unsigned char { AIR, SOLID, SAND, WATER, GAS };
+    enum cell_type : unsigned char { AIR, SOLID, LIQUID, GAS, SAND, WATER, Count };
 
     class Cell
     {
@@ -25,10 +25,16 @@ namespace Segratha
             void Update(int x, int y, unsigned char cycle, Chunk* c);
 
             //info functions
-            bool isAir();
-            bool isSolid();
-            bool isLiquid();
-            bool isGas();
+            bool IsAir();
+            bool IsSolid();
+            bool IsLiquid();
+            bool IsGas();
+
+            //convert a cell_type into its generic state
+            cell_type GetState(cell_type t);
+
+            //grab the generic state of the cell
+            cell_type GetState();
 
             //returns the density of the selected cell
             int GetDensity();

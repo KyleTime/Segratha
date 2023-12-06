@@ -13,23 +13,24 @@ GameObject::~GameObject()
 
 }
 
-bool GameObject::CellCollide(CaveSand* sand)
-{
-    sf::Vector2i l;
-    bool feet = false;
-    return CellCollide(sand, l, feet);
-}
-
-bool GameObject::CellCollide(CaveSand* sand, sf::Vector2i& point, bool feet)
+GameObject::cellTypeList GameObject::CellCollide(CaveSand* sand)
 {
     cellPos = sand->WorldToCell(position); //update cellPos
+
+    cellTypeList list;
+
+    for(int i = 0; i < cell_type::Count; i++)
+    {
+        list.list[i] = 0;
+    }
+
+    list.size = 0;
 
     Chunk* chunk = sand->GetChunkCell(cellPos.x - cellScale.x, cellPos.y - cellScale.y); //grab the chunk at the top left of the collider
     for(int x = -cellScale.x; x < cellScale.x; x++)
         for(int y = -cellScale.y; y < cellScale.y + 1; y++)
         {
-            if(y == cellScale.y + 1 && !feet)
-                continue;
+            list.size++; //keep track of how many total cells we check
 
             //what chunk is our current position in? (used to check if we need to shift the chunk)
             sf::Vector2i curChunk = sand->CellToChunkPos(cellPos + sf::Vector2i(x, y));
@@ -46,19 +47,64 @@ bool GameObject::CellCollide(CaveSand* sand, sf::Vector2i& point, bool feet)
 
             //now we should be free to check the funny chunk
             
-            //is there a solid?
+            //get the relative position of our thingy
             sf::Vector2i rel = sand->RelCellPos(cellPos + sf::Vector2i(x, y));
 
-            if(!chunk->cells[rel.x][rel.y].isAir())
+            //does it exist?
+            if(!chunk->cells[rel.x][rel.y].IsAir())
             {
-                point = cellPos + sf::Vector2i(x, y);
+                Cell c = chunk->cells[rel.x][rel.y];
+                cell_type t = c.GetState();
+                if(t != c.type) //is this shit not generic?
+                    list.list[chunk->cells[rel.x][rel.y].type]++; //we add one to the index of the type (this will tell us how many we encountered)
 
-                return true;
+                list.list[t]++; //add to collisions with generic states
             }
+            
         }
     
-    return false;
+    return list;
 }
+
+// bool GameObject::CellCollide(CaveSand* sand, sf::Vector2i& point, bool feet)
+// {
+//     cellPos = sand->WorldToCell(position); //update cellPos
+
+//     Chunk* chunk = sand->GetChunkCell(cellPos.x - cellScale.x, cellPos.y - cellScale.y); //grab the chunk at the top left of the collider
+//     for(int x = -cellScale.x; x < cellScale.x; x++)
+//         for(int y = -cellScale.y; y < cellScale.y + 1; y++)
+//         {
+//             if(y == cellScale.y + 1 && !feet)
+//                 continue;
+
+//             //what chunk is our current position in? (used to check if we need to shift the chunk)
+//             sf::Vector2i curChunk = sand->CellToChunkPos(cellPos + sf::Vector2i(x, y));
+
+//             //have we crossed into a new chunk?
+//             if(!chunk || curChunk.x != chunk->xChunk || curChunk.y != chunk->yChunk)
+//             {
+//                 chunk = sand->GetChunk(curChunk.x, curChunk.y);
+//             }
+
+//             //if we don't got a chunk rn, move on
+//             if(!chunk)
+//                 continue;
+
+//             //now we should be free to check the funny chunk
+            
+//             //is there a solid?
+//             sf::Vector2i rel = sand->RelCellPos(cellPos + sf::Vector2i(x, y));
+
+//             if(!chunk->cells[rel.x][rel.y].isAir())
+//             {
+//                 point = cellPos + sf::Vector2i(x, y);
+
+//                 return true;
+//             }
+//         }
+    
+//     return false;
+// }
 
 bool GameObject::CheckGround(CaveSand* sand)
 {
@@ -82,7 +128,7 @@ bool GameObject::CheckGround(CaveSand* sand)
     for(int x = -cellScale.x; x < cellScale.x && !solid; x++)
     {
         Cell* c = sand->GetCellAt(footCell.x + x, footCell.y);
-        solid = c != nullptr && c->isSolid();
+        solid = c != nullptr && c->IsSolid();
     }
 
     //if we hit something, let's try and steppy
@@ -97,7 +143,7 @@ bool GameObject::CheckGround(CaveSand* sand)
         {
             Cell* c1 = sand->GetCellAt(cellPos.x + cellScale.x - 1, cellPos.y + y);
             Cell* c2 = sand->GetCellAt(cellPos.x - cellScale.x + 1, cellPos.y + y);
-            steppy = c1 != nullptr && c1->isSolid() || c2 != nullptr && c2->isSolid();
+            steppy = c1 != nullptr && c1->IsSolid() || c2 != nullptr && c2->IsSolid();
 
             if(steppy && cellScale.y - y > STEPPY_RANGE)
             {
@@ -159,7 +205,7 @@ bool GameObject::CheckRightWall(CaveSand* sand)
     {
         //checks the cell for being solid (also for whether it exists)
         Cell* c = sand->GetCellAt(rightCell.x, rightCell.y + y);
-        solid = c != nullptr && c->isSolid();
+        solid = c != nullptr && c->IsSolid();
     }
 
     //did we fucking hit a goofy ass wall? DID WE?
@@ -190,7 +236,7 @@ bool GameObject::CheckLeftWall(CaveSand* sand)
     {
         //checks the cell for existing and whether it's solid
         Cell* c = sand->GetCellAt(leftCell.x, leftCell.y + y);
-        solid = c != nullptr && c->isSolid();
+        solid = c != nullptr && c->IsSolid();
     }
 
     //did we fucking hit a goofy ass wall? DID WE?
@@ -220,7 +266,7 @@ bool GameObject::CheckCeiling(CaveSand* sand)
     for(int x = -cellScale.x; x < cellScale.x && !solid; x++)
     {
         Cell* c = sand->GetCellAt(headCell.x + x, headCell.y);
-        solid = c != nullptr && c->isSolid();
+        solid = c != nullptr && c->IsSolid();
     }
 
     //DEBUG THAT SHOWS THE SELECTED CELL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

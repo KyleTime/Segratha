@@ -184,7 +184,7 @@ void CaveSand::UpdateThreaded()
     cycle++;
 
     //there's probably a better way to do this, but "int cycle = cycle" just works
-    unsigned char cycle = this->cycle;
+    //unsigned char cycle = this->cycle;
 
     //list of current threads
     std::vector<std::thread> threads;
@@ -525,7 +525,7 @@ bool CaveSand::Move(int fromX, int fromY, int toX, int toY)
 
     sf::Vector2i fromP = RelCellPos(fromX, fromY);
 
-    if(c != nullptr && c->cells[to.x][to.y].isAir()) //if air, then move
+    if(c != nullptr && c->cells[to.x][to.y].IsAir()) //if air, then move
     {
         //decide whether we need to grab another chunk
         if(!same)
