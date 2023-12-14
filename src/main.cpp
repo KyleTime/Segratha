@@ -3,6 +3,7 @@
 #include "CaveSand/CaveSand.h"
 #include "Game/GameObject.h"
 #include "Game/Components/CellCollider.h"
+#include "CaveSand/Camera.h"
 
 #include <iostream>
 
@@ -44,13 +45,14 @@ int main()
 
     GameObject player;
 
-    player.AddComponent(new CellCollider());
+    player.AddComponent(new CellCollider(sf::Vector2i(5, 5)));
     
     sf::Text mousePos("MOUSE: ", font, 50);
 
     float timer = 0.005f;
     while (window.isOpen())
     {
+        CAMERA::ChangeCenter(player.position);
         KyleTime::UpdateDelta(); //Update Deltatime calculation
 
         window.setView(CAMERA::view); //update camera position

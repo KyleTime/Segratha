@@ -5,6 +5,7 @@ using namespace Segratha;
 GameObject::GameObject()
     : components(std::vector<Component*>())
 {
+    position = sf::Vector2f(0, 0);
 }
 
 GameObject::~GameObject()
@@ -22,6 +23,10 @@ void GameObject::Awake()
 
 void GameObject::Update()
 {
+    static CaveSand* sand = CaveSand::GetInstance();
+
+    cellPos = sand->WorldToCell(position); //update cellPos
+
     static bool awakened = false;
 
     if(!awakened)

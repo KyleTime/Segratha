@@ -1,30 +1,46 @@
 #include "CellCollider.h"
 #include "../../CaveSand/CaveSand.h"
+#include "../../Game/GameObject.h"
 
 using namespace Segratha;
 
+/// @brief Create a collider on the object with a size of "scale"
+/// @param scale Represents the number of cells out in every direction that the collider spans
+CellCollider::CellCollider(sf::Vector2i scale)
+{
+    cellScale = scale;
+}
+
 void CellCollider::Awake()
 {
-    position = sf::Vector2f(0, 0); 
-    cellScale = sf::Vector2i(1, 1);
-    cellPos = sf::Vector2i(0, 0); 
+
 }
 
 void CellCollider::Update()
 {
-    static CaveSand* sand = CaveSand::GetInstance();
 
-    cellPos = sand->WorldToCell(position); //update cellPos
 }
 
 void CellCollider::Draw(sf::RenderWindow* target)
 {
+    //draws a white dot at the player's center
+    sf::RectangleShape shape(sf::Vector2f(20, 20));
+    shape.setPosition(gameObject->position.x - 10, gameObject->position.y - 10);
 
-}
+    //draws a box that represents the player's body
+    float xSize = cellScale.x * CELL_SIZE * 2;
+    float ySize = cellScale.y * CELL_SIZE * 2;
+    sf::RectangleShape hitbox(sf::Vector2f(xSize, ySize));
+    hitbox.setPosition((gameObject->cellPos.x * CELL_SIZE) - xSize/2, (gameObject->cellPos.y * CELL_SIZE) - ySize/2);
+    hitbox.setFillColor(sf::Color::Magenta);
+
+    target->draw(hitbox);
+    target->draw(shape);
+} 
 
 CellCollider::cellTypeList CellCollider::CellCollide(CaveSand* sand)
 {
-    cellPos = sand->WorldToCell(position); //update cellPos
+    gameObject->cellPos = sand->WorldToCell(gameObject->position); //update cellPos
 
     cellTypeList list;
 
@@ -35,14 +51,14 @@ CellCollider::cellTypeList CellCollider::CellCollide(CaveSand* sand)
 
     list.size = 0;
 
-    Chunk* chunk = sand->GetChunkCell(cellPos.x - cellScale.x, cellPos.y - cellScale.y); //grab the chunk at the top left of the collider
+    Chunk* chunk = sand->GetChunkCell(gameObject->cellPos.x - cellScale.x, gameObject->cellPos.y - cellScale.y); //grab the chunk at the top left of the collider
     for(int x = -cellScale.x; x < cellScale.x; x++)
         for(int y = -cellScale.y; y < cellScale.y + 1; y++)
         {
             list.size++; //keep track of how many total cells we check
 
             //what chunk is our current position in? (used to check if we need to shift the chunk)
-            sf::Vector2i curChunk = sand->CellToChunkPos(cellPos + sf::Vector2i(x, y));
+            sf::Vector2i curChunk = sand->CellToChunkPos(gameObject->cellPos + sf::Vector2i(x, y));
 
             //have we crossed into a new chunk?
             if(!chunk || curChunk.x != chunk->xChunk || curChunk.y != chunk->yChunk)
@@ -57,7 +73,7 @@ CellCollider::cellTypeList CellCollider::CellCollide(CaveSand* sand)
             //now we should be free to check the funny chunk
             
             //get the relative position of our thingy
-            sf::Vector2i rel = sand->RelCellPos(cellPos + sf::Vector2i(x, y));
+            sf::Vector2i rel = sand->RelCellPos(gameObject->cellPos + sf::Vector2i(x, y));
 
             //does it exist?
             if(!chunk->cells[rel.x][rel.y].IsAir())
@@ -120,10 +136,10 @@ bool CellCollider::CheckGround(CaveSand* sand)
     //this function will take the world position of the feet and see if there's anything there in the cell position
 
     //grab world position below the character
-    float feetPos = position.y + (cellScale.y) * CELL_SIZE;
+    float feetPos = gameObject->position.y + (cellScale.y) * CELL_SIZE;
 
     //the cell position of the cell below the character
-    sf::Vector2i footCell = sand->WorldToCell(sf::Vector2f(position.x, feetPos));
+    sf::Vector2i footCell = sand->WorldToCell(sf::Vector2f(gameObject->position.x, feetPos));
 
     //for whatever reason, the cell position is a lil off when it goes negative, lol
     //I'm too afraid to mess with GetCellAt(), so this will be my fix
@@ -150,8 +166,8 @@ bool CellCollider::CheckGround(CaveSand* sand)
 
         for(int y = -cellScale.y; y < cellScale.y && !steppy; y++)
         {
-            Cell* c1 = sand->GetCellAt(cellPos.x + cellScale.x - 1, cellPos.y + y);
-            Cell* c2 = sand->GetCellAt(cellPos.x - cellScale.x + 1, cellPos.y + y);
+            Cell* c1 = sand->GetCellAt(gameObject->cellPos.x + cellScale.x - 1, gameObject->cellPos.y + y);
+            Cell* c2 = sand->GetCellAt(gameObject->cellPos.x - cellScale.x + 1, gameObject->cellPos.y + y);
             steppy = c1 != nullptr && c1->IsSolid() || c2 != nullptr && c2->IsSolid();
 
             if(steppy && cellScale.y - y > STEPPY_RANGE)
@@ -190,7 +206,7 @@ bool CellCollider::CheckGround(CaveSand* sand)
         //calculate the distance between the cell and the feet of the player (world)
         float depth = (footCell.y * CELL_SIZE) - feetPos;
         //add the difference to the y position
-        position.y += depth + CELL_SIZE * 0.5f; //NOTE: I have no idea why the half cell addition is needed, it just is
+        gameObject->position.y += depth + CELL_SIZE * 0.5f; //NOTE: I have no idea why the half cell addition is needed, it just is
         
         return true;
     }
@@ -201,10 +217,10 @@ bool CellCollider::CheckGround(CaveSand* sand)
 bool CellCollider::CheckRightWall(CaveSand* sand)
 {
     //grab world position to the right of our character
-    float rightPos = position.x + (cellScale.x) * CELL_SIZE;
+    float rightPos = gameObject->position.x + (cellScale.x) * CELL_SIZE;
 
     //the cell position of the right cell, we'll use this to find other cells we're interested in, teehee
-    sf::Vector2i rightCell = sand->WorldToCell(sf::Vector2f(rightPos, position.y));
+    sf::Vector2i rightCell = sand->WorldToCell(sf::Vector2f(rightPos, gameObject->position.y));
 
     //is the cell to the side of us solid?
     bool solid = false;
@@ -222,7 +238,7 @@ bool CellCollider::CheckRightWall(CaveSand* sand)
     {
         //depth calculations!
         float depth = (rightCell.x * CELL_SIZE) - rightPos;
-        position.x += depth + CELL_SIZE * 0.5f;
+        gameObject->position.x += depth + CELL_SIZE * 0.5f;
         return true;
     }
 
@@ -232,10 +248,10 @@ bool CellCollider::CheckRightWall(CaveSand* sand)
 bool CellCollider::CheckLeftWall(CaveSand* sand)
 {
     //grab world position to the right of our character
-    float leftPos = position.x - (cellScale.x + 1) * CELL_SIZE;
+    float leftPos = gameObject->position.x - (cellScale.x + 1) * CELL_SIZE;
 
     //the cell position of the right cell, we'll use this to find other cells we're interested in, teehee
-    sf::Vector2i leftCell = sand->WorldToCell(sf::Vector2f(leftPos, position.y));
+    sf::Vector2i leftCell = sand->WorldToCell(sf::Vector2f(leftPos, gameObject->position.y));
 
     //is the cell to the side of us solid?
     bool solid = false;
@@ -253,7 +269,7 @@ bool CellCollider::CheckLeftWall(CaveSand* sand)
     {
         //depth calculations!
         float depth = (leftCell.x * CELL_SIZE) - leftPos;
-        position.x += depth + CELL_SIZE * 0.5f;
+        gameObject->position.x += depth + CELL_SIZE * 0.5f;
         return true;
     }
 
@@ -263,10 +279,10 @@ bool CellCollider::CheckLeftWall(CaveSand* sand)
 bool CellCollider::CheckCeiling(CaveSand* sand)
 {
     //grab world position above the character
-    float headPos = position.y - (cellScale.y) * CELL_SIZE;
+    float headPos = gameObject->position.y - (cellScale.y) * CELL_SIZE;
 
     //the cell position of the cell above the character
-    sf::Vector2i headCell = sand->WorldToCell(sf::Vector2f(position.x, headPos));
+    sf::Vector2i headCell = sand->WorldToCell(sf::Vector2f(gameObject->position.x, headPos));
 
     //is the cell above us solid?
     bool solid = false;
@@ -300,7 +316,7 @@ bool CellCollider::CheckCeiling(CaveSand* sand)
         //calculate the distance between the cell and the head of the player (world)
         float depth = (headCell.y * CELL_SIZE) - headPos;
         //add the difference to the y position
-        position.y += depth + CELL_SIZE; //NOTE: I have no idea why the half cell addition is needed, it just is
+        gameObject->position.y += depth + CELL_SIZE; //NOTE: I have no idea why the half cell addition is needed, it just is
         
         return true;
     }

@@ -9,7 +9,7 @@ namespace Segratha
 
     class Component
     {
-        private:
+        protected:
             GameObject* gameObject;
         public:
             Component();

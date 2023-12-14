@@ -11,9 +11,6 @@ namespace Segratha
         public:
             const int STEPPY_RANGE = 3; //how large of a step can this object take? (const for now)
 
-            sf::Vector2f position; //current position of the object
-            sf::Vector2i cellPos; //current pixel cell of the object (updated every update cycle)
-
             sf::Vector2i cellScale; //amount of cells outward in either direction that the world hitbox extends. ie: if you have a cellScale of (1, 1), the hitbox is a 3x3 square
 
             cell_type collision_majority = AIR; //what element are we colliding with the most currently?
@@ -26,7 +23,7 @@ namespace Segratha
                 int size;
             };
 
-            using Component::Component;
+            CellCollider(sf::Vector2i cellScale);
 
             void Awake() override;
             void Update() override;

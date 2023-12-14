@@ -12,6 +12,8 @@ namespace Segratha
         private:
             std::vector<Component*> components;
         public:
+            sf::Vector2f position; //current position of the object
+            sf::Vector2i cellPos; //current pixel cell of the object (updated every update cycle)
 
             GameObject();
             ~GameObject();
