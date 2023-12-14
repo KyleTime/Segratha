@@ -1,7 +1,8 @@
 #include <SFML/Graphics.hpp>
 
 #include "CaveSand/CaveSand.h"
-#include "PlayerCore.h"
+#include "Game/GameObject.h"
+#include "Game/Components/CellCollider.h"
 
 #include <iostream>
 
@@ -41,7 +42,9 @@ int main()
 
     sf::Text fps("FPS: " + std::to_string(1.f / KyleTime::DeltaTime()), font, 50);
 
-    PlayerCore player;
+    GameObject player;
+
+    player.AddComponent(new CellCollider());
     
     sf::Text mousePos("MOUSE: ", font, 50);
 
@@ -66,7 +69,7 @@ int main()
 
         manager->FullRun(&window, timer); //update the CaveSand engine and draw it
 
-        player.Update(manager); //update player
+        player.Update(); //update player
         player.Draw(&window); //draw player character to screen
 
         //BRUSH CODE -----------------------------------------------------------------------------------
