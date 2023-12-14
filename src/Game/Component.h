@@ -2,6 +2,7 @@
 #define COMPONENT_H
 
 #include <SFML/Graphics.hpp>
+#include "../CaveSand/KyleTime.hpp"
 
 namespace Segratha
 {
