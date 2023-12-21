@@ -2,7 +2,7 @@
 
 #include "CaveSand/CaveSand.h"
 #include "Game/GameObject.h"
-#include "Game/Components/CellCollider.h"
+#include "Game/Components/BasicPhysics.h"
 #include "CaveSand/Camera.h"
 
 #include <iostream>
@@ -45,9 +45,13 @@ int main()
 
     GameObject player;
 
-    player.AddComponent(new CellCollider(sf::Vector2i(5, 5)));
+    player.AddComponent(new BasicPhysics(sf::Vector2i(5, 5)));
     
     sf::Text mousePos("MOUSE: ", font, 50);
+
+    //AWAKE CALL
+    player.Awake();
+    //----------------
 
     float timer = 0.005f;
     while (window.isOpen())

@@ -4,6 +4,26 @@
 
 using namespace Segratha;
 
+void BasicPhysics::Awake()
+{
+    velocity = sf::Vector2f();
+    state = OPEN_AIR;
+    grounded = false;
+}
+
+void BasicPhysics::Update()
+{
+    StateUpdate();
+    GravityUpdate();
+    Drag();
+    MoveSegmented();
+}
+
+void BasicPhysics::Draw(sf::RenderWindow* target)
+{
+    CellCollider::Draw(target);
+}
+
 bool BasicPhysics::FullCollisionCheck()
 {   
     CaveSand* sand = CaveSand::GetInstance();
