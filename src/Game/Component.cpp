@@ -34,3 +34,8 @@ void Component::Draw(sf::RenderWindow* target)
 {
     
 }
+
+std::string Component::GetComponentID()
+{
+    return "Empty";
+}

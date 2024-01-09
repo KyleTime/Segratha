@@ -37,6 +37,7 @@ namespace Segratha
             void Awake() override;
             void Update() override;
             void Draw(sf::RenderWindow* target) override;
+            std::string GetComponentID() override;
     };
 }
 

@@ -51,3 +51,13 @@ Component* GameObject::AddComponent(Component* Component)
     return Component;
 }
 
+Component* GameObject::GetComponent(std::string componentID)
+{
+    for(int i = 0; i < components.size(); i++)
+    {
+        if(components[i]->GetComponentID() == componentID)
+            return components[i];
+    }
+
+    return nullptr;
+}

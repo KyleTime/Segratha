@@ -2,7 +2,7 @@
 
 #include "CaveSand/CaveSand.h"
 #include "Game/GameObject.h"
-#include "Game/Components/BasicPhysics.h"
+#include "Game/Components/PlayerMovement.h"
 #include "CaveSand/Camera.h"
 
 #include <iostream>
@@ -45,7 +45,8 @@ int main()
 
     GameObject player;
 
-    player.AddComponent(new BasicPhysics(sf::Vector2i(5, 5)));
+    //player.AddComponent(new BasicPhysics(sf::Vector2i(5, 5)));
+    player.AddComponent(new PlayerMovement());
     
     sf::Text mousePos("MOUSE: ", font, 50);
 

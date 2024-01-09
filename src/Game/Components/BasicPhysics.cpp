@@ -24,6 +24,11 @@ void BasicPhysics::Draw(sf::RenderWindow* target)
     CellCollider::Draw(target);
 }
 
+std::string BasicPhysics::GetComponentID()
+{
+    return "BasicPhysics";
+}
+
 bool BasicPhysics::FullCollisionCheck()
 {   
     CaveSand* sand = CaveSand::GetInstance();

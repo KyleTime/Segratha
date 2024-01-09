@@ -29,6 +29,7 @@ namespace Segratha
             virtual void Draw(sf::RenderWindow* target);
 
             Component* AddComponent(Component* c);
+            Component* GetComponent(std::string componentID);
     };
 }
 

@@ -28,6 +28,7 @@ namespace Segratha
             void Awake() override;
             void Update() override;
             void Draw(sf::RenderWindow* target) override;
+            std::string GetComponentID() override;
 
             /// @brief returns true if any part of the hitbox defined by cellScale is colliding a cell
             /// @param cave the CaveSand engine to query

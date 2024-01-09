@@ -38,6 +38,11 @@ void CellCollider::Draw(sf::RenderWindow* target)
     target->draw(shape);
 } 
 
+std::string CellCollider::GetComponentID()
+{
+    return "CellCollider";
+}
+
 CellCollider::cellTypeList CellCollider::CellCollide(CaveSand* sand)
 {
     gameObject->cellPos = sand->WorldToCell(gameObject->position); //update cellPos

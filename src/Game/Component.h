@@ -21,6 +21,8 @@ namespace Segratha
             virtual void Update();
             virtual void Draw(sf::RenderWindow* target);
 
+            virtual std::string GetComponentID();
+
             void SetParent(GameObject* parent);
             GameObject* GetParent();
     };
