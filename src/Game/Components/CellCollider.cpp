@@ -328,3 +328,20 @@ bool CellCollider::CheckCeiling(CaveSand* sand)
 
     return false;
 }
+
+bool CellCollider::CheckIfGrounded()
+{
+    CaveSand* cave = CaveSand::GetInstance();
+
+    int yP = gameObject->cellPos.y + cellScale.y + 1; //get the layer just below the feets
+
+    bool solid = false;
+
+    for(int x = -cellScale.x; x < cellScale.x && !solid; x++)
+    {
+        Cell* c = cave->GetCellAt(gameObject->cellPos.x + x, yP);
+        solid = c != nullptr && c->IsSolid();
+    } 
+
+    return solid;
+}

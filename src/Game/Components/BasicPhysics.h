@@ -12,7 +12,6 @@ namespace Segratha
         private:
             const float GRAVITY_SCALE = -120;
             const float TERMINAL_VELOCITY = 250;
-            sf::Vector2f velocity;
             //used in a switch statement to determine what kind of movement the object is doing
             phys_state state;
             bool grounded;
@@ -33,6 +32,8 @@ namespace Segratha
 
         public:
             using CellCollider::CellCollider;
+            
+            sf::Vector2f velocity;
 
             void Awake() override;
             void Update() override;

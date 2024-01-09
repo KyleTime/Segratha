@@ -45,7 +45,7 @@ int main()
 
     GameObject player;
 
-    //player.AddComponent(new BasicPhysics(sf::Vector2i(5, 5)));
+    player.AddComponent(new BasicPhysics(sf::Vector2i(5, 5)));
     player.AddComponent(new PlayerMovement());
     
     sf::Text mousePos("MOUSE: ", font, 50);

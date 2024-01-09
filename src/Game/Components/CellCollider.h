@@ -54,6 +54,11 @@ namespace Segratha
             /// @param cave the CaveSand engine to query
             /// @return True if there is ceiling
             bool CheckCeiling(CaveSand* cave);
+
+            /// @brief checks a little further below the usual ground check to see if we standing as fuck
+            /// @param cave The CaveSand engine to query
+            /// @return Whether there is indeed ground there
+            bool CheckIfGrounded();
     };
 }
 
