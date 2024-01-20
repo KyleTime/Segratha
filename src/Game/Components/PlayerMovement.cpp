@@ -15,7 +15,7 @@ void PlayerMovement::Awake()
 
 void PlayerMovement::Update()
 {
-    grounded = phys->CheckIfGrounded();
+    grounded = phys->grounded || phys->CheckIfGrounded();
 
     HandleJump();
     HandleRun();
@@ -23,7 +23,13 @@ void PlayerMovement::Update()
 
 void PlayerMovement::Draw(sf::RenderWindow* target)
 {
+    sf::RectangleShape center(sf::Vector2f(6, 6));
+    center.setPosition(gameObject->position.x - 3, gameObject->position.y - 3);
     
+    if(grounded)
+        center.setFillColor(sf::Color::Blue);
+    else
+        center.setFillColor(sf::Color::Magenta);
 }
 
 void PlayerMovement::HandleRun()
@@ -51,7 +57,8 @@ void PlayerMovement::HandleRun()
 
 void PlayerMovement::HandleJump()
 {
-
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && grounded)
+        phys->velocity.y = -jumpPower;
 }
 
 void PlayerMovement::Accelerate(int input)

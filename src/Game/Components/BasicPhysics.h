@@ -14,7 +14,6 @@ namespace Segratha
             const float TERMINAL_VELOCITY = 250;
             //used in a switch statement to determine what kind of movement the object is doing
             phys_state state;
-            bool grounded;
 
             /// @brief Checks each direction based on velocity and applies proper collisions (based on functions in GameObject) 
             /// @param sand the CaveSand engine to query
@@ -34,6 +33,7 @@ namespace Segratha
             using CellCollider::CellCollider;
             
             sf::Vector2f velocity;
+            bool grounded;
 
             void Awake() override;
             void Update() override;

@@ -13,14 +13,14 @@ namespace Segratha
 
             //HORIZONTAL MOVEMENT
 
-            float maxSpeed = 10; //the speed that normal movement is capped at
-            float acceleration = 1;
-            float deceleration = 1;
+            float maxSpeed = 80; //the speed that normal movement is capped at
+            float acceleration = 0.3f;
+            float deceleration = 0.1f;
             float airMod = 0.5f;
 
             //VERTICAL MOVEMENT
 
-            float jumpPower;
+            float jumpPower = 100;
 
             //INFORMATION
             

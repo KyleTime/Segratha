@@ -333,7 +333,7 @@ bool CellCollider::CheckIfGrounded()
 {
     CaveSand* cave = CaveSand::GetInstance();
 
-    int yP = gameObject->cellPos.y + cellScale.y + 1; //get the layer just below the feets
+    int yP = gameObject->cellPos.y + cellScale.y + 0; //get the layer just below the feets
 
     bool solid = false;
 
