@@ -43,6 +43,8 @@ namespace Segratha
 
             void HandleRun();
             void HandleJump();
+
+            std::string GetComponentID() override;
     };
 }
 

@@ -1,63 +1,93 @@
 #include <SFML/Graphics.hpp>
 
+#include "KGenerics/LinkedList.h"
 #include "CaveSand/CaveSand.h"
 #include "Game/GameObject.h"
 #include "Game/Components/PlayerMovement.h"
 #include "CaveSand/Camera.h"
+#include "Game/Components/HitPoints.h"
 
 #include <iostream>
 
 using namespace Segratha;
 
-int main()
+void InitializeCamera(sf::RenderWindow& window)
 {
-    // for(int i = 0; i > -CHUNK_SIZE * 2; i--)
-    // {
-    //     std::cout << "i: " << i << " i \% CHUNK_SIZE: " << (i % CHUNK_SIZE) + CHUNK_SIZE - 1 << std::endl;
-    // }
-
-
     //set zoom
     CAMERA::zoom = 3.f;
-
-    sf::RenderWindow window(sf::VideoMode(CAMERA::ASPECT_RATIO * CAMERA::SCREEN_SIZE, CAMERA::SCREEN_SIZE), "Segratha");
 
     CAMERA::view = sf::View();
     CAMERA::ChangeCenter(sf::Vector2f(CHUNK_SIZE * CELL_SIZE * 2 + 32 * CELL_SIZE, CHUNK_SIZE * CELL_SIZE * 1.5f));
     CAMERA::ChangeSize(CAMERA::ASPECT_RATIO * CAMERA::zoom * CAMERA::GAME_SIZE, CAMERA::zoom * CAMERA::GAME_SIZE);
 
     window.setView(CAMERA::view);
+}
 
+void AwakenAllGameObjects(LinkedList<GameObject*> list)
+{
+        Node<GameObject*>* node = list.head;
+        do
+        {
+            GameObject* g = node->data;
+
+            g->Awake();
+            
+        } while(node->next != nullptr);
+}
+
+void UpdateAllGameObjects(LinkedList<GameObject*> list, sf::RenderWindow* target)
+{
+        Node<GameObject*>* node = list.head;
+        do
+        {
+            GameObject* g = node->data;
+
+            g->Update();
+            g->Draw(target);
+            
+        } while(node->next != nullptr);
+}
+
+int main()
+{
+    //INIT SCREEN---------------------------------------------------------------------
+    sf::RenderWindow window(sf::VideoMode(CAMERA::ASPECT_RATIO * CAMERA::SCREEN_SIZE, CAMERA::SCREEN_SIZE), "Segratha");
+    InitializeCamera(window); //pass screen through funny setup
+    //--------------------------------------------------------------------------------
+
+    //init CaveSand engine
     CaveSand* manager = CaveSand::GetInstance();
-    // manager->LoadAt(-1, 0);
-    // manager->LoadAt(0, 0);
-    // manager->LoadAt(-1, 1);
-    // manager->LoadAt(1, 0);
-    
-    //manager->Set(0, 50, Cell(SOLID));
 
+    //init Time stuff for deltatime
     KyleTime::GetInstance();
 
+    //DEBUG---------------------------------------------------------------------------
     sf::Font font;
     font.loadFromFile("minecrap.ttf");
 
     sf::Text fps("FPS: " + std::to_string(1.f / KyleTime::DeltaTime()), font, 50);
-
-    GameObject player;
-
-    player.AddComponent(new BasicPhysics(sf::Vector2i(5, 5)));
-    player.AddComponent(new PlayerMovement());
-    
     sf::Text mousePos("MOUSE: ", font, 50);
+    //--------------------------------------------------------------------------------
 
-    //AWAKE CALL
-    player.Awake();
-    //----------------
+
+    //SET UP PLAYER-------------------------------------------------------------------
+    GameObject* player = new GameObject();
+
+    player->AddComponent(new BasicPhysics(sf::Vector2i(5, 5)));
+    player->AddComponent(new PlayerMovement());
+    player->AddComponent(new HitPoints(100, false));
+    //--------------------------------------------------------------------------------
+
+    LinkedList<GameObject*> SceneObjects(player);
+
+    //call awake on every GameObject at the start (so that any in the scene at the very beginning get their call)
+    //NOTE: when creating a new GameObject, make sure to call Awake() lol
+    AwakenAllGameObjects(SceneObjects);
 
     float timer = 0.005f;
     while (window.isOpen())
     {
-        CAMERA::ChangeCenter(player.position);
+        CAMERA::ChangeCenter(player->position);
         KyleTime::UpdateDelta(); //Update Deltatime calculation
 
         window.setView(CAMERA::view); //update camera position
@@ -76,8 +106,7 @@ int main()
 
         manager->FullRun(&window, timer); //update the CaveSand engine and draw it
 
-        player.Update(); //update player
-        player.Draw(&window); //draw player character to screen
+        UpdateAllGameObjects(SceneObjects, &window); //update every GameObject in the scene
 
         //BRUSH CODE -----------------------------------------------------------------------------------
         

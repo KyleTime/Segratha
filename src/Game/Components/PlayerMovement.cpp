@@ -11,6 +11,8 @@ void PlayerMovement::Awake()
     {
         std::cerr << "COMPONENT NOT FOUND!" << std::endl;
     }
+
+    std::cout << "AWAKENED" << std::endl;
 }
 
 void PlayerMovement::Update()
@@ -109,4 +111,9 @@ void PlayerMovement::Decelerate(float mul)
     {
         phys->velocity.x = 0;
     }
+}
+
+std::string PlayerMovement::GetComponentID()
+{
+    return "PlayerMovement";
 }

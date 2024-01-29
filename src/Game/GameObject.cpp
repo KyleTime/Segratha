@@ -10,7 +10,11 @@ GameObject::GameObject()
 
 GameObject::~GameObject()
 {
-
+    //make sure we clean up our mess lol
+    for(int i = 0; i < components.size(); i++)
+    {
+        delete components[i];
+    }
 }
 
 void GameObject::Awake()
@@ -41,6 +45,12 @@ void GameObject::Draw(sf::RenderWindow* target)
     {
         components[i]->Draw(target);
     }
+}
+
+void GameObject::Die()
+{
+    //marked for deletion
+    garbage = true;
 }
 
 Component* GameObject::AddComponent(Component* Component)

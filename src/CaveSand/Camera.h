@@ -5,6 +5,7 @@
 
 namespace Segratha
 {
+    /// @brief Handles operations related to camera position and size, use RenderWindow.SetView(...) with Camera::view to update your window
     class CAMERA
     {
         public:
@@ -12,7 +13,9 @@ namespace Segratha
             static constexpr int SCREEN_SIZE = 800; //size of the actual window
             static constexpr int GAME_SIZE = 1200; //size of the game world (about 1200 works nicely)
 
+            /// @brief The singleton View that the Camera should look at.
             static sf::View view;
+            /// @brief A multiplier for how zoomed in the Camera should be
             static float zoom;
             
             CAMERA();
