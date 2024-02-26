@@ -53,6 +53,11 @@ void GameObject::Die()
     garbage = true;
 }
 
+bool GameObject::Garbage()
+{
+    return garbage;
+}
+
 Component* GameObject::AddComponent(Component* Component)
 {
     Component->SetParent(this);

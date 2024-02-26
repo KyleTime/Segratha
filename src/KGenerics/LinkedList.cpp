@@ -13,6 +13,7 @@ template<typename T>
 LinkedList<T>::LinkedList(T headData)
 {
     head = new Node<T>(headData);
+    size = 1;
 }
 
 template<typename T>
@@ -28,6 +29,8 @@ void LinkedList<T>::AddNode(T data)
     node->next = head;
     head->previous = node;
     head = node;
+
+    size++;
 }
 
 template<typename T>
@@ -39,6 +42,8 @@ void LinkedList<T>::RemoveNode(Node<T>* node)
 
     node->previous->next = node->next;
     node->next->previous = node->previous;
+
+    size--;
 
     delete node;
 };

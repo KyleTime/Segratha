@@ -1,6 +1,6 @@
 #include "CellCollider.h"
 #include "../../CaveSand/CaveSand.h"
-#include "../../Game/GameObject.h"
+#include "../GameObject.h"
 
 using namespace Segratha;
 

@@ -21,6 +21,7 @@ class LinkedList
 
     public:
         Node<T>* head;
+        int size;
         LinkedList(T headData);
 
         //adds a node onto the front, pushing "head" down the list

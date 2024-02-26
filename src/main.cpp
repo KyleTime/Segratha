@@ -6,11 +6,14 @@
 #include "Game/Components/PlayerMovement.h"
 #include "CaveSand/Camera.h"
 #include "Game/Components/HitPoints.h"
+#include "Game/Components/SpriteRenderer.h"
 
 #include <iostream>
 
 using namespace Segratha;
 
+/// @brief Initializes the Camera given the parameters in the CAMERA class
+/// @param window the window to draw to
 void InitializeCamera(sf::RenderWindow& window)
 {
     //set zoom
@@ -38,14 +41,35 @@ void AwakenAllGameObjects(LinkedList<GameObject*> list)
 void UpdateAllGameObjects(LinkedList<GameObject*> list, sf::RenderWindow* target)
 {
         Node<GameObject*>* node = list.head;
-        do
+        while(node != nullptr)
         {
             GameObject* g = node->data;
 
+            if(g->Garbage())
+            {
+                Node<GameObject*>* garbNode = node;
+                node = node->next;
+                list.RemoveNode(garbNode); //this removes the node and fully deletes the gameobject btw
+                continue;
+            }
+
             g->Update();
             g->Draw(target);
-            
-        } while(node->next != nullptr);
+
+            node = node->next;
+        } 
+}
+
+/// @brief Creates a new GameObject, adds it to the list, and calls "Awake()"
+/// @param list the list of gameobjects to add this to
+/// @return Pointer to the new Object
+GameObject* Instantiate(LinkedList<GameObject*> list)
+{
+    GameObject* g = new GameObject();
+    list.AddNode(g);
+    g->Awake();
+
+    return g;
 }
 
 int main()
@@ -73,9 +97,10 @@ int main()
     //SET UP PLAYER-------------------------------------------------------------------
     GameObject* player = new GameObject();
 
-    player->AddComponent(new BasicPhysics(sf::Vector2i(5, 5)));
+    player->AddComponent(new BasicPhysics(sf::Vector2i(8, 8)));
     player->AddComponent(new PlayerMovement());
     player->AddComponent(new HitPoints(100, false));
+    player->AddComponent(new SpriteRenderer("src/Sprites/Player/gonk.png"));
     //--------------------------------------------------------------------------------
 
     LinkedList<GameObject*> SceneObjects(player);

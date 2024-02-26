@@ -1,6 +1,6 @@
 #include "BasicPhysics.h"
-#include "../GameObject.h"
 #include <algorithm>
+#include "../GameObject.h"
 
 using namespace Segratha;
 
@@ -21,7 +21,7 @@ void BasicPhysics::Update()
 
 void BasicPhysics::Draw(sf::RenderWindow* target)
 {
-    CellCollider::Draw(target);
+    //CellCollider::Draw(target);
 }
 
 std::string BasicPhysics::GetComponentID()
