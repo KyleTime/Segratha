@@ -127,7 +127,7 @@ int main()
         //---------------------------------------------------------------------------------------------------------------------------------------
 
 
-        window.clear(); //clear window for rendering
+        window.clear(sf::Color(155, 204, 161)); //clear window for rendering
 
         manager->FullRun(&window, timer); //update the CaveSand engine and draw it
 

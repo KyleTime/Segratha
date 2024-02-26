@@ -49,7 +49,7 @@ void SpriteRenderer::Update()
 
 void SpriteRenderer::Draw(sf::RenderWindow* target)
 {
-    sprite.setPosition(gameObject->position.x - width/2, gameObject->position.y - height/2);
+    sprite.setPosition(gameObject->position.x - width/2, gameObject->position.y - height/2 - CELL_SIZE/2);
     target->draw(sprite);
 }
 
