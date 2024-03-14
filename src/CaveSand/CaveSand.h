@@ -107,8 +107,14 @@ namespace Segratha
             //given a screen position, calculate which Cell is located there
             sf::Vector2i ScreenToCell(sf::Vector2i screen);
 
+            //given a screen position, output a world position
+            sf::Vector2f ScreenToWorld(sf::Vector2i screen);
+
             //given a world position, output a cell position
             sf::Vector2i WorldToCell(sf::Vector2f world);
+
+            //given a cell position, output a world position
+            sf::Vector2f CellToWorld(sf::Vector2i cell);
 
             //takes in a Cell position and returns a Chunk position
             sf::Vector2i CellToChunkPos(sf::Vector2i cellPos);

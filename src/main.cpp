@@ -7,6 +7,8 @@
 #include "CaveSand/Camera.h"
 #include "Game/Components/HitPoints.h"
 #include "Game/Components/SpriteRenderer.h"
+#include "Game/KInput.h"
+#include "Game/Components/PlayerItem.h"
 
 #include <iostream>
 
@@ -34,8 +36,10 @@ void AwakenAllGameObjects(LinkedList<GameObject*> list)
             GameObject* g = node->data;
 
             g->Awake();
-            
-        } while(node->next != nullptr);
+
+            node = node->next;
+
+        } while(node != nullptr);
 }
 
 void UpdateAllGameObjects(LinkedList<GameObject*> list, sf::RenderWindow* target)
@@ -85,6 +89,9 @@ int main()
     //init Time stuff for deltatime
     KyleTime::GetInstance();
 
+    //init KInput for input stuff
+    KInput k(&window);
+
     //DEBUG---------------------------------------------------------------------------
     sf::Font font;
     font.loadFromFile("minecrap.ttf");
@@ -103,7 +110,16 @@ int main()
     player->AddComponent(new SpriteRenderer("src/Sprites/Player/gonk.png"));
     //--------------------------------------------------------------------------------
 
-    LinkedList<GameObject*> SceneObjects(player);
+    //SET UP TEST ITEM----------------------------------------------------------------
+    GameObject* item = new GameObject();
+
+    SpriteRenderer* spr = new SpriteRenderer("src/Sprites/Player/chain_saw.png");
+    item->AddComponent(spr);
+    item->AddComponent(new PlayerItem(spr, player));
+    //--------------------------------------------------------------------------------
+
+    LinkedList<GameObject*> SceneObjects(item);
+    SceneObjects.AddNode(player);
 
     //call awake on every GameObject at the start (so that any in the scene at the very beginning get their call)
     //NOTE: when creating a new GameObject, make sure to call Awake() lol
@@ -163,15 +179,23 @@ int main()
 
         //show what cell the mouse is hovering over
         sf::RectangleShape mouseSelect = sf::RectangleShape(sf::Vector2f(CELL_SIZE, CELL_SIZE));
-        mouseSelect.setPosition(sf::Vector2f(mouse.x, mouse.y)*CELL_SIZE);
+        mouseSelect.setPosition((sf::Vector2f)KInput::GetMousePositionCell()*CELL_SIZE);
         mouseSelect.setFillColor(sf::Color::Transparent);
         mouseSelect.setOutlineColor(sf::Color::Red);
         mouseSelect.setOutlineThickness(5);
         window.draw(mouseSelect);
 
+        //display mouse position in cell
         mousePos.setString("MOUSE POS: " + std::to_string(mouse.x) + ", " + std::to_string(mouse.y));
         mousePos.setPosition(CAMERA::view.getCenter() - sf::Vector2f(CAMERA::GetScreenWidth()/2, CAMERA::GetScreenHeight()/2 + 50));
         window.draw(mousePos);
+
+        //show where the mouse is in world position
+        sf::CircleShape mWorld = sf::CircleShape(10);
+        mWorld.setPosition(KInput::GetMousePositionWorld());
+        mWorld.setFillColor(sf::Color::Blue);
+        mWorld.setOutlineColor(sf::Color::Blue);
+        window.draw(mWorld);
 
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {

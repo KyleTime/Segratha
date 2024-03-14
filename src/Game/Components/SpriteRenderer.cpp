@@ -19,22 +19,33 @@ SpriteRenderer::SpriteRenderer(std::string path)
 
     float scale = CELL_SIZE;
 
-    width = size.x*scale;
-    height = size.y*scale;
+    width = size.x;
+    height = size.y;
 
-    sprite.setTexture(*tex);
+    sprite = new sf::Sprite();
+    sprite->setTexture(*tex);
 
-    sprite.setScale(sf::Vector2f(scale, scale));
+    sprite->setScale(sf::Vector2f(scale, scale));
+
+    ResetOrigin();
 }
 
-SpriteRenderer::SpriteRenderer(sf::Sprite sprite)
+SpriteRenderer::SpriteRenderer(sf::Sprite* sprite)
 {
     this->sprite = sprite;
 
-    sf::Vector2u size = sprite.getTexture()->getSize();
+    sf::Vector2u size = sprite->getTexture()->getSize();
 
     width = size.x;
     height = size.y;
+}
+
+SpriteRenderer::~SpriteRenderer()
+{
+    //cleanup that texture in memory, those aren't cheap you know!
+    const sf::Texture* tex = sprite->getTexture();
+    delete tex;
+    delete sprite;
 }
 
 void SpriteRenderer::Awake()
@@ -49,11 +60,24 @@ void SpriteRenderer::Update()
 
 void SpriteRenderer::Draw(sf::RenderWindow* target)
 {
-    sprite.setPosition(gameObject->position.x - width/2, gameObject->position.y - height/2 - CELL_SIZE/2);
-    target->draw(sprite);
+    //sprite->setPosition(gameObject->position.x, gameObject->position.y );
+    sprite->setPosition(gameObject->position);
+    sprite->setRotation(rotato);
+    target->draw(*sprite);
+
+    sf::CircleShape origin(10.f);
+    origin.setOrigin(gameObject->position);
+    origin.setOutlineColor(sf::Color::Blue);
+    origin.setFillColor(sf::Color::Transparent);
+    target->draw(origin);
 }
 
 std::string SpriteRenderer::GetComponentID()
 {
     return "SpriteRenderer";
+}
+
+void SpriteRenderer::ResetOrigin()
+{
+    sprite->setOrigin(sf::Vector2f(width/(2), height/(2)));
 }

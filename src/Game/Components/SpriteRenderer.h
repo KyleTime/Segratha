@@ -8,15 +8,19 @@ namespace Segratha
     class SpriteRenderer : public Component
     {
         private:
-            sf::Sprite sprite;
+            sf::Sprite* sprite;
             //width in pixels of the sprite
             int width;
             //height in pixels of the sprite
             int height;
 
+
         public:
+            float rotato = 0;
+
             SpriteRenderer(std::string path);
-            SpriteRenderer(sf::Sprite path);
+            SpriteRenderer(sf::Sprite* path);
+            ~SpriteRenderer();
 
             void Awake() override;
 
@@ -24,6 +28,8 @@ namespace Segratha
             void Draw(sf::RenderWindow* target) override;
 
             std::string GetComponentID() override;
+
+            void ResetOrigin();
     };
 }
 

@@ -14,6 +14,8 @@ namespace Segratha
         protected:
             GameObject* gameObject;
         public:
+            bool enabled = true;
+
             Component();
             ~Component();
 

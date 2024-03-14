@@ -33,7 +33,8 @@ void GameObject::Update()
 
     for(int i = 0; i < components.size(); i++)
     {
-        components[i]->Update();
+        if(components[i]->enabled)
+            components[i]->Update();
     }
 
     //collideFrame = CellCollide(sand); //update collideFrame
@@ -43,7 +44,8 @@ void GameObject::Draw(sf::RenderWindow* target)
 {
     for(int i = 0; i < components.size(); i++)
     {
-        components[i]->Draw(target);
+        if(components[i]->enabled)
+            components[i]->Draw(target);
     }
 }
 

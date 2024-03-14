@@ -451,6 +451,16 @@ sf::Vector2i CaveSand::WorldToCell(sf::Vector2f world)
     return (sf::Vector2i)fin;
 }
 
+sf::Vector2f CaveSand::CellToWorld(sf::Vector2i cell)
+{
+    sf::Vector2f fin = sf::Vector2f(cell.x, cell.y);
+
+    //change units to world
+    fin *= CELL_SIZE;
+
+    return fin;
+}
+
 sf::Vector2i CaveSand::CellToChunkPos(sf::Vector2i cellPos)
 {
     return CellToChunkPos(cellPos.x, cellPos.y);
