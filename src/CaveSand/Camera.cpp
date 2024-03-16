@@ -36,10 +36,10 @@ void CAMERA::ChangeSize(sf::Vector2f size)
 
 float CAMERA::GetScreenHeight()
 {
-    return SCREEN_SIZE;
+    return CAM_Y * SCREEN_SIZE;
 }
 
 float CAMERA::GetScreenWidth()
 {
-    return SCREEN_SIZE * ASPECT_RATIO;
+    return CAM_X * SCREEN_SIZE;
 }

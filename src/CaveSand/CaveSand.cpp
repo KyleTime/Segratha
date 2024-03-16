@@ -412,28 +412,31 @@ Cell* CaveSand::GetCellAt(int x, int y)
 
 }
 
-sf::Vector2i CaveSand::ScreenToCell(sf::Vector2i pos)
+sf::Vector2f CaveSand::ScreenToWorld(sf::Vector2i screen)
 {
-    sf::Vector2i fin = pos;
+    sf::Vector2f fin = (sf::Vector2f)screen;
 
     //offset to center
-    fin.x -= CAMERA::ASPECT_RATIO * CAMERA::SCREEN_SIZE * 1/2;
-    fin.y -= CAMERA::SCREEN_SIZE * 1/2;
+    fin.x -= CAMERA::GetScreenWidth() * 1/2;
+    fin.y -= CAMERA::GetScreenHeight() * 1/2;
 
     //convert to game size
-    fin.x *= (float)CAMERA::GAME_SIZE / CAMERA::SCREEN_SIZE;
-    fin.y *= (float)CAMERA::GAME_SIZE / CAMERA::SCREEN_SIZE;
-
+    //here we multiply the screen coords by the zoom/size, which cancels out the size of the window and multiplies in the zoom of the game world
+    //kinda hard to wrap your head around huh? It's almost like 180/pi actually
+    fin.x *= (float)CAMERA::zoom / CAMERA::SCREEN_SIZE;
+    fin.y *= (float)CAMERA::zoom / CAMERA::SCREEN_SIZE;
 
     //center pos
-    fin.x += CAMERA::view.getCenter().x / CAMERA::zoom;
-    fin.y += CAMERA::view.getCenter().y / CAMERA::zoom;
-
-    //round to cell
-    fin.x /= CELL_SIZE / CAMERA::zoom;
-    fin.y /= CELL_SIZE / CAMERA::zoom;
+    //here we get the center of our camera in the world and add those coords so we can have the mouse position relative to where we looking
+    fin.x += CAMERA::view.getCenter().x;
+    fin.y += CAMERA::view.getCenter().y;
 
     return fin;
+}
+
+sf::Vector2i CaveSand::ScreenToCell(sf::Vector2i screen)
+{
+    return WorldToCell(ScreenToWorld(screen));
 }
 
 sf::Vector2i CaveSand::WorldToCell(sf::Vector2f world)

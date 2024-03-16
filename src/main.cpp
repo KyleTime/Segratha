@@ -19,11 +19,11 @@ using namespace Segratha;
 void InitializeCamera(sf::RenderWindow& window)
 {
     //set zoom
-    CAMERA::zoom = 3.f;
+    CAMERA::zoom = 9.f;
 
     CAMERA::view = sf::View();
     CAMERA::ChangeCenter(sf::Vector2f(CHUNK_SIZE * CELL_SIZE * 2 + 32 * CELL_SIZE, CHUNK_SIZE * CELL_SIZE * 1.5f));
-    CAMERA::ChangeSize(CAMERA::ASPECT_RATIO * CAMERA::zoom * CAMERA::GAME_SIZE, CAMERA::zoom * CAMERA::GAME_SIZE);
+    CAMERA::ChangeSize((CAMERA::CAM_X * CAMERA::zoom), CAMERA::CAM_Y * CAMERA::zoom);
 
     window.setView(CAMERA::view);
 }
@@ -79,7 +79,7 @@ GameObject* Instantiate(LinkedList<GameObject*> list)
 int main()
 {
     //INIT SCREEN---------------------------------------------------------------------
-    sf::RenderWindow window(sf::VideoMode(CAMERA::ASPECT_RATIO * CAMERA::SCREEN_SIZE, CAMERA::SCREEN_SIZE), "Segratha");
+    sf::RenderWindow window(sf::VideoMode(CAMERA::CAM_X * CAMERA::SCREEN_SIZE, CAMERA::CAM_Y * CAMERA::SCREEN_SIZE), "Segratha");
     InitializeCamera(window); //pass screen through funny setup
     //--------------------------------------------------------------------------------
 

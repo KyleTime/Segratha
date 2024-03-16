@@ -9,13 +9,13 @@ namespace Segratha
     class CAMERA
     {
         public:
-            static constexpr float ASPECT_RATIO = 1.78; //aspect ratio (currently like 16:9 or some shit)
-            static constexpr int SCREEN_SIZE = 800; //size of the actual window
-            static constexpr int GAME_SIZE = 1200; //size of the game world (about 1200 works nicely)
+            static constexpr float CAM_X = 640; //base size of window (width)
+            static constexpr float CAM_Y = 360; //base size of window (height)
+            static constexpr int SCREEN_SIZE = 2; //window multiplier (x1 [640x360] x2 [1280x720] x3 [1920x1080])
 
             /// @brief The singleton View that the Camera should look at.
             static sf::View view;
-            /// @brief A multiplier for how zoomed in the Camera should be
+            /// @brief A multiplier for how zoomed in the Camera should be (on second thought don't mess with this too much)
             static float zoom;
             
             CAMERA();
