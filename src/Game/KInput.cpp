@@ -4,10 +4,12 @@
 using namespace Segratha;
 
 KInput* KInput::inst = nullptr;
+LinkedList<GameObject*>* KInput::SceneObjects = nullptr;
 
-KInput::KInput(sf::RenderWindow* window)
+KInput::KInput(sf::RenderWindow* window, LinkedList<GameObject*>* head)
 {
     this->window = window;
+    this->SceneObjects = head;
     KInput::inst = this;
     right = sf::Keyboard::Key::D;
     left = sf::Keyboard::Key::A;

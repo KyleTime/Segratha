@@ -11,7 +11,7 @@ namespace Segratha
         public:
             static constexpr float CAM_X = 640; //base size of window (width)
             static constexpr float CAM_Y = 360; //base size of window (height)
-            static constexpr int SCREEN_SIZE = 2; //window multiplier (x1 [640x360] x2 [1280x720] x3 [1920x1080])
+            static constexpr int SCREEN_SIZE = 3; //window multiplier (x1 [640x360] x2 [1280x720] x3 [1920x1080])
 
             /// @brief The singleton View that the Camera should look at.
             static sf::View view;

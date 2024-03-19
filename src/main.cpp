@@ -89,8 +89,7 @@ int main()
     //init Time stuff for deltatime
     KyleTime::GetInstance();
 
-    //init KInput for input stuff
-    KInput k(&window);
+
 
     //DEBUG---------------------------------------------------------------------------
     sf::Font font;
@@ -120,6 +119,9 @@ int main()
 
     LinkedList<GameObject*> SceneObjects(item);
     SceneObjects.AddNode(player);
+
+    //init KInput for input stuff
+    KInput k(&window, &SceneObjects);
 
     //call awake on every GameObject at the start (so that any in the scene at the very beginning get their call)
     //NOTE: when creating a new GameObject, make sure to call Awake() lol

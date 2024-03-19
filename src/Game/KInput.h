@@ -2,15 +2,20 @@
 #define KINPUT_H
 
 #include <SFML/Graphics.hpp>
+#include "../KGenerics/LinkedList.h"
+#include "GameObject.h"
 
 namespace Segratha
 {
     class KInput
     {
         public:
-            KInput(sf::RenderWindow* window);
+            KInput(sf::RenderWindow* window, LinkedList<GameObject*>* head);
 
             static KInput* inst;
+
+            //note: I'm keeping a pointer of the list of gameobjects in the scene here so that we don't need to worry about it when other objects need it
+            static LinkedList<GameObject*>* SceneObjects;
 
             sf::RenderWindow* window;
 
