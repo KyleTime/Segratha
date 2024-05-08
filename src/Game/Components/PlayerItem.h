@@ -14,9 +14,9 @@ namespace Segratha
         public:
             PlayerItem(SpriteRenderer* rend, GameObject* player);
 
-            void Awake() override;
-            void Update() override;
-            void Draw(sf::RenderWindow* target) override;
+            virtual void Awake() override;
+            virtual void Update() override;
+            virtual void Draw(sf::RenderWindow* target) override;
 
             std::string GetComponentID() override;
 
